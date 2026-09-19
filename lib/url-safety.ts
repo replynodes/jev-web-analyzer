@@ -76,7 +76,13 @@ export async function fetchPublicMarkdown(input: string, apiKey: string, fetcher
     const data = body?.data;
     const markdown = typeof data === "string" ? data : data?.markdown ?? data?.content ?? data?.text;
     if (typeof markdown !== "string" || !markdown.trim() || typeof body?.meta?.request_id !== "string") throw new Error("INVALID_PROVIDER_RESPONSE");
-    return { url: url.toString(), markdown: markdown.slice(0, MAX_RESPONSE_BYTES), requestId: body.meta.request_id };
+    const providerFinalUrl = [body.meta.final_url, body.meta.finalUrl, body.meta.url].find((value: unknown) => typeof value === "string");
+    let finalUrl = url.toString();
+    if (providerFinalUrl) {
+      try { const candidate = new URL(providerFinalUrl); if (["http:", "https:"].includes(candidate.protocol)) finalUrl = candidate.toString(); } catch { /* use the validated requested URL */ }
+    }
+    const providerStatus = [body.meta.status, body.meta.status_code].find((value: unknown) => typeof value === "number" && Number.isInteger(value) && value >= 100 && value <= 599);
+    return { url: finalUrl, markdown: markdown.slice(0, MAX_RESPONSE_BYTES), requestId: body.meta.request_id, status: providerStatus ?? response.status };
   }
   throw new Error("FETCH_FAILED");
 }

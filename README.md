@@ -8,9 +8,11 @@ The public requested model alias is exactly `jev-latest`. Vercel AI Gateway's ca
 
 ## Architecture
 
-The browser sends only a URL and at most three bounded custom judgment definitions to `POST /jev-web-analyzer/api/analyze`. The Next.js server validates the URL, resolves DNS, calls `GET https://api.replynodes.com/v1/webcontext/scrape?url=...` with `Authorization: Bearer ${REPLYNODES_API_KEY}`, and expects the successful `{ data, meta }` envelope with `meta.request_id`. The clean Markdown in `data` becomes Jev state. Jev receives default page questions plus optional Boolean, Choice, or Score questions in one evaluation through Vercel AI Gateway using canonical model ID `typesafe-ai/jev` and `AI_GATEWAY_API_KEY`. The route returns a stable, sanitized JSON contract; provider errors never cross the boundary.
+The browser sends only a URL and at most three bounded custom judgment definitions to `POST /jev-web-analyzer/api/analyze`. The Next.js server validates the URL, resolves DNS, calls `GET https://api.replynodes.com/v1/webcontext/scrape?url=...` with `Authorization: Bearer ${REPLYNODES_API_KEY}`, and expects the successful `{ data, meta }` envelope with `meta.request_id`. The clean Markdown in `data` becomes Jev state. Jev receives default page questions plus optional Boolean, Choice, or Score questions in one evaluation through Vercel AI Gateway using canonical model ID `typesafe-ai/jev` and `AI_GATEWAY_API_KEY`. The default response is a stable, sanitized JSON contract. With `Accept: application/x-ndjson`, the same operation emits flushed typed events in awaited order; failures emit a sanitized `error` event, and cache hits emit a compact trace using the recorded result without pretending to fetch again.
 
 The server measures scrape, extraction, Jev, and total latency. Successful responses use a bounded five-minute in-memory cache keyed by a SHA-256 digest of the normalized URL and judgment definitions. No database, queue, Redis, or worker service is required.
+
+Streaming responses use `application/x-ndjson; charset=utf-8`, `Cache-Control: no-cache`, and `X-Accel-Buffering: no`. If nginx fronts the service, disable proxy buffering for the analysis location so real stage events can arrive progressively. The UI displays only measured timings, returned token usage, returned probabilities, and explicit provider metadata.
 
 ## Security decisions
 
@@ -59,7 +61,7 @@ Do not call the smoke successful unless it returns HTTP 200 with a real ReplyNod
 
 ## Live demo and deployment
 
-The live demo is `https://replynodes.com/jev-web-analyzer/`. For deployment, run the verified Next.js service on loopback and configure only `REPLYNODES_API_KEY` and `AI_GATEWAY_API_KEY` as server environment variables. Configure nginx to proxy `/jev-web-analyzer/` to the loopback Next service while preserving the `/jev-web-analyzer/` prefix, including for `/jev-web-analyzer/api/analyze`; the Next.js `basePath` then resolves the existing `app/api/analyze/route.ts` route. Verify the page, assets, API errors, and an authorized safe public analysis before sharing. This repository does not create a GitHub repository, push branches, or deploy infrastructure.
+The live demo is `https://replynodes.com/jev-web-analyzer/`. For deployment, run the verified Next.js service on loopback and configure only `REPLYNODES_API_KEY` and `AI_GATEWAY_API_KEY` as server environment variables. Configure nginx to proxy `/jev-web-analyzer/` to the loopback Next service while preserving the `/jev-web-analyzer/` prefix, including for `/jev-web-analyzer/api/analyze`; the Next.js `basePath` then resolves the existing `app/api/analyze/route.ts` route. Set `proxy_buffering off;` for the streaming API location. Verify the page, assets, API errors, and an authorized safe public analysis before sharing. This repository does not create a GitHub repository, push branches, or deploy infrastructure.
 
 ## Made with Jev
 

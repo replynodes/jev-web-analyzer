@@ -39,6 +39,8 @@ export const answerSchema = z.object({
   value: z.union([z.boolean(), z.string(), z.number()]),
   probabilities: z.record(z.string(), z.number().min(0).max(1)).optional(),
   confidence: z.number().min(0).max(1).optional(),
+  question: z.string().max(240).optional(),
+  instructions: z.string().max(240).optional(),
 });
 
 export const analysisResponseSchema = z.object({
@@ -51,6 +53,8 @@ export const analysisResponseSchema = z.object({
     extractMs: z.number().nonnegative(),
     jevMs: z.number().nonnegative(),
     totalMs: z.number().nonnegative(),
+    fetchStatus: z.number().int().nonnegative().optional(),
+    finalUrl: z.string().url().optional(),
   }),
   usage: z.object({ inputTokens: z.number().nonnegative().optional(), outputTokens: z.number().nonnegative().optional(), characters: z.number().nonnegative() }),
   model: z.object({ requested: z.literal("jev-latest"), resolved: z.string().optional() }),
@@ -58,6 +62,7 @@ export const analysisResponseSchema = z.object({
 });
 
 export type AnalysisResponse = z.infer<typeof analysisResponseSchema>;
+export type SanitizedAnswer = NonNullable<ReturnType<typeof sanitizeAnswer>> & { question?: string; instructions?: string };
 
 const RESOLVED_MODEL_KEYS = ["resolvedModel", "resolvedModelId", "modelVersion", "version"] as const;
 
@@ -112,4 +117,11 @@ export function sanitizeAnswer(name: string, raw: unknown, expectedType: "boolea
   const booleanProbabilities = booleanProbability === null ? undefined : { true: booleanProbability, false: 1 - booleanProbability };
   const outputProbabilities = expectedType === "boolean" ? booleanProbabilities : safeProbabilities && Object.keys(safeProbabilities).length ? safeProbabilities : undefined;
   return { name, type: expectedType, value: safeValue, ...(outputProbabilities ? { probabilities: outputProbabilities } : {}), ...(confidence === undefined ? {} : { confidence }) };
+}
+
+export function withPromptMetadata(
+  answer: SanitizedAnswer | null,
+  prompt: { question: string; instructions: string },
+) : SanitizedAnswer | null {
+  return answer ? { ...answer, question: prompt.question, instructions: prompt.instructions } : answer;
 }
