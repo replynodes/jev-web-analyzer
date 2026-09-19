@@ -53,23 +53,53 @@ export const analysisResponseSchema = z.object({
     totalMs: z.number().nonnegative(),
   }),
   usage: z.object({ inputTokens: z.number().nonnegative().optional(), outputTokens: z.number().nonnegative().optional(), characters: z.number().nonnegative() }),
-  model: z.object({ requested: z.literal("typesafe/jev-latest"), resolved: z.string().optional() }),
+  model: z.object({ requested: z.literal("jev-latest"), resolved: z.string().optional() }),
   scrape: z.object({ requestId: z.string().max(200), markdownPreview: z.string().max(4000) }),
 });
 
 export type AnalysisResponse = z.infer<typeof analysisResponseSchema>;
 
-export function sanitizeResolvedModel(value: unknown): string | undefined {
-  if (typeof value !== "string" || value.length > 160) return undefined;
-  return /^[\w./:@-]+$/.test(value) ? value : undefined;
+const RESOLVED_MODEL_KEYS = ["resolvedModel", "resolvedModelId", "modelVersion", "version"] as const;
+
+function safeModelString(value: unknown) {
+  if (typeof value !== "string") return undefined;
+  const normalized = value.trim();
+  return normalized.length <= 160 && /^[\w./:@-]+$/.test(normalized) ? normalized : undefined;
 }
 
-export function sanitizeAnswer(name: string, raw: unknown, expectedType: "boolean" | "choice" | "score") {
+export function sanitizeResolvedModel(providerMetadata: unknown): string | undefined {
+  if (!providerMetadata || typeof providerMetadata !== "object") return undefined;
+  for (const namespace of Object.values(providerMetadata as Record<string, unknown>)) {
+    if (!namespace || typeof namespace !== "object") continue;
+    const metadata = namespace as Record<string, unknown>;
+    for (const key of RESOLVED_MODEL_KEYS) {
+      const value = safeModelString(metadata[key]);
+      if (value) return value;
+    }
+  }
+  return undefined;
+}
+
+function sanitizeConfidence(providerMetadata: unknown, questionId: string) {
+  if (!providerMetadata || typeof providerMetadata !== "object") return undefined;
+  const typesafe = (providerMetadata as Record<string, unknown>).typesafe;
+  if (!typesafe || typeof typesafe !== "object") return undefined;
+  const confidence = (typesafe as Record<string, unknown>).confidence;
+  const value = typeof confidence === "number"
+    ? confidence
+    : confidence && typeof confidence === "object"
+      ? (confidence as Record<string, unknown>)[questionId]
+      : undefined;
+  return typeof value === "number" && Number.isFinite(value) && value >= 0 && value <= 1 ? value : undefined;
+}
+
+export function sanitizeAnswer(name: string, raw: unknown, expectedType: "boolean" | "choice" | "score", providerMetadata?: unknown) {
   if (!raw || typeof raw !== "object") return null;
   const item = raw as Record<string, unknown>;
   const value = expectedType === "boolean" ? item.probability : expectedType === "choice" ? item.choice : item.score;
+  const booleanProbability = typeof value === "number" && Number.isFinite(value) && value >= 0 && value <= 1 ? value : null;
   const safeValue = expectedType === "boolean"
-    ? typeof value === "number" && value >= 0 && value <= 1 ? value >= 0.5 : null
+    ? booleanProbability === null ? null : booleanProbability >= 0.5
     : expectedType === "score"
       ? typeof value === "number" && Number.isFinite(value) ? value : null
       : typeof value === "string" && value.length <= 80 ? value : null;
@@ -78,6 +108,8 @@ export function sanitizeAnswer(name: string, raw: unknown, expectedType: "boolea
   const safeProbabilities = probabilities && typeof probabilities === "object"
     ? Object.fromEntries(Object.entries(probabilities as Record<string, unknown>).filter(([, probability]) => typeof probability === "number" && probability >= 0 && probability <= 1).slice(0, 20)) as Record<string, number>
     : undefined;
-  const confidence = typeof item.confidence === "number" && item.confidence >= 0 && item.confidence <= 1 ? item.confidence : undefined;
-  return { name, type: expectedType, value: safeValue, ...(safeProbabilities && Object.keys(safeProbabilities).length ? { probabilities: safeProbabilities } : {}), ...(confidence === undefined ? {} : { confidence }) };
+  const confidence = sanitizeConfidence(providerMetadata, name);
+  const booleanProbabilities = booleanProbability === null ? undefined : { true: booleanProbability, false: 1 - booleanProbability };
+  const outputProbabilities = expectedType === "boolean" ? booleanProbabilities : safeProbabilities && Object.keys(safeProbabilities).length ? safeProbabilities : undefined;
+  return { name, type: expectedType, value: safeValue, ...(outputProbabilities ? { probabilities: outputProbabilities } : {}), ...(confidence === undefined ? {} : { confidence }) };
 }

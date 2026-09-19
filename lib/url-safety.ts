@@ -7,7 +7,22 @@ export const MAX_RESPONSE_BYTES = 1_500_000;
 
 function privateIpv4(address: string) {
   const octets = address.split(".").map(Number);
-  return octets.length === 4 && (octets[0] === 10 || octets[0] === 127 || octets[0] === 0 || (octets[0] === 169 && octets[1] === 254) || (octets[0] === 172 && octets[1] >= 16 && octets[1] <= 31) || (octets[0] === 192 && octets[1] === 168));
+  if (octets.length !== 4 || octets.some((octet) => !Number.isInteger(octet) || octet < 0 || octet > 255)) return false;
+  const value = octets.reduce((total, octet) => total * 256 + octet, 0);
+  const inRange = (start: number, end: number) => value >= start && value <= end;
+  return inRange(0x0a000000, 0x0affffff) || // 10.0.0.0/8
+    inRange(0x7f000000, 0x7fffffff) || // 127.0.0.0/8
+    inRange(0xa9fe0000, 0xa9feffff) || // 169.254.0.0/16
+    inRange(0xac100000, 0xac1fffff) || // 172.16.0.0/12
+    inRange(0xc0a80000, 0xc0a8ffff) || // 192.168.0.0/16
+    inRange(0x64400000, 0x647fffff) || // 100.64.0.0/10
+    inRange(0xc0000000, 0xc00000ff) || // 192.0.0.0/24
+    inRange(0xc0000200, 0xc00002ff) || // 192.0.2.0/24
+    inRange(0xc6120000, 0xc613ffff) || // 198.18.0.0/15
+    inRange(0xc6336400, 0xc63364ff) || // 198.51.100.0/24
+    inRange(0xcb007100, 0xcb0071ff) || // 203.0.113.0/24
+    inRange(0xf0000000, 0xffffffff) || // 240.0.0.0/4 and 255.255.255.255
+    inRange(0, 0x00ffffff); // 0.0.0.0/8
 }
 
 function privateIpv6(address: string) {

@@ -1,12 +1,14 @@
 # ReplyNodes · Jev Web Analyzer
 
-**Unofficial community project, not affiliated with TypeSafe AI.**
+Unofficial community project, not affiliated with TypeSafe AI.
 
 A focused adaptation of the Vercel Labs AI SDK Gateway Demo: enter a public URL, let ReplyNodes fetch clean Markdown, then send that state to Jev through the Vercel AI Gateway for typed page classification. It is a developer demo, not a ReplyNodes marketing site.
 
+The public requested model alias is exactly `jev-latest`. Vercel AI Gateway's canonical evaluation model ID is `typesafe-ai/jev`, which routes the Jev latest model; this project does not claim an exact underlying version.
+
 ## Architecture
 
-The browser sends only a URL and at most three bounded custom judgment definitions to `POST /api/analyze`. The Next.js server validates the URL, resolves DNS, calls `GET https://api.replynodes.com/v1/webcontext/scrape?url=...` with `Authorization: Bearer ${REPLYNODES_API_KEY}`, and expects the successful `{ data, meta }` envelope with `meta.request_id`. The clean Markdown in `data` becomes Jev state. Jev receives default page questions plus optional Boolean, Choice, or Score questions in one evaluation through Vercel AI Gateway using `typesafe/jev-latest` and `AI_GATEWAY_API_KEY`. The route returns a stable, sanitized JSON contract; provider errors never cross the boundary.
+The browser sends only a URL and at most three bounded custom judgment definitions to `POST /api/analyze`. The Next.js server validates the URL, resolves DNS, calls `GET https://api.replynodes.com/v1/webcontext/scrape?url=...` with `Authorization: Bearer ${REPLYNODES_API_KEY}`, and expects the successful `{ data, meta }` envelope with `meta.request_id`. The clean Markdown in `data` becomes Jev state. Jev receives default page questions plus optional Boolean, Choice, or Score questions in one evaluation through Vercel AI Gateway using canonical model ID `typesafe-ai/jev` and `AI_GATEWAY_API_KEY`. The route returns a stable, sanitized JSON contract; provider errors never cross the boundary.
 
 The server measures scrape, extraction, Jev, and total latency. Successful responses use a bounded five-minute in-memory cache keyed by a SHA-256 digest of the normalized URL and judgment definitions. No database, queue, Redis, or worker service is required.
 
@@ -16,7 +18,7 @@ The server measures scrape, extraction, Jev, and total latency. Successful respo
 - URLs are HTTP(S)-only and reject credentials, fragments, localhost, private/link-local/reserved IPv4 and IPv6, and DNS names resolving to blocked addresses. The request is bounded by timeout, response-size, and redirect limits; ReplyNodes remains the fetch boundary for the target page.
 - Request JSON, URL length, question count, names, instructions, labels, options, and rubric sizes are bounded with Zod. Page text is untrusted state, not application instructions.
 - A bounded in-memory per-IP token bucket provides basic abuse protection for a single-instance demo. The cache contains only sanitized successful responses and expires automatically.
-- Model resolution is displayed only when the installed AI SDK result exposes a safe model identifier. The app does not guess a Jev version.
+- A resolved model/version is displayed only when explicit, allowlisted provider metadata supplies a sanitized value. The app never treats the SDK response model ID or the `jev-latest` alias as a resolved version.
 
 ## Environment
 
@@ -61,8 +63,8 @@ The intended live demo URL is `https://jev.replynodes.com` when deployed by the 
 
 ## Made with Jev
 
-This is a small Made with Jev submission context: Jev evaluates web context that ReplyNodes has actually fetched, preserving native probabilities and confidence where returned. It is unofficial and does not represent TypeSafe AI. The Vercel Labs AI SDK Gateway Demo license and credit remain in [LICENSE](./LICENSE).
+This is a small Made with Jev submission context: Jev evaluates web context that ReplyNodes has actually fetched, preserving native probabilities and explicit TypeSafe confidence where returned. It is unofficial and does not represent TypeSafe AI. The Vercel Labs AI SDK Gateway Demo license and credit remain in [LICENSE](./LICENSE).
 
 ## Non-goals / ADR
 
-No auth, login, credits, pricing, user quotas, client credentials, guessed Jev version, mock runtime, second database, queue, Kafka, or broad refactor. A single Next.js server with bounded in-process cache/rate limiting keeps the public demo inspectable and deployable; a multi-instance production service would need shared controls.
+No auth, login, credits, pricing, user quotas, client credentials, guessed Jev version, mock runtime, second database, queue, Kafka, or broad refactor. A single Next.js server with bounded in-process cache/rate limiting keeps the public demo inspectable and deployable; revisit the design when multi-instance traffic requires shared controls or the Gateway contract changes.

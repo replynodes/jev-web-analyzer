@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 type Judgment = { name: string; type: "boolean" | "choice" | "score"; instructions: string; criteria: string };
-type Result = { url: string; classifications: Answer[]; judgments: Answer[]; timeline: { startedAt: string; scrapeMs: number; extractMs: number; jevMs: number; totalMs: number }; usage: { characters: number; inputTokens?: number; outputTokens?: number }; model: { requested: string; resolved?: string }; scrape: { requestId: string; markdownPreview: string } };
+type Result = { url: string; classifications: Answer[]; judgments: Answer[]; timeline: { startedAt: string; scrapeMs: number; extractMs: number; jevMs: number; totalMs: number }; usage: { characters: number; inputTokens?: number; outputTokens?: number }; model: { requested: "jev-latest"; resolved?: string }; scrape: { requestId: string; markdownPreview: string } };
 type Answer = { name: string; type: string; value: boolean | string | number; probabilities?: Record<string, number>; confidence?: number };
 const labels: Record<string, string> = { page_type: "Page type", audience: "Audience", intent: "Intent", content_quality: "Content quality", research_usefulness: "Research usefulness", commercial_intent: "Commercial intent", seo_spam_likelihood: "SEO / spam likelihood" };
 
