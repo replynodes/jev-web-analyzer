@@ -8,7 +8,7 @@ The public requested model alias is exactly `jev-latest`. Vercel AI Gateway's ca
 
 ## Architecture
 
-The browser sends only a URL and at most three bounded custom judgment definitions to `POST /api/analyze`. The Next.js server validates the URL, resolves DNS, calls `GET https://api.replynodes.com/v1/webcontext/scrape?url=...` with `Authorization: Bearer ${REPLYNODES_API_KEY}`, and expects the successful `{ data, meta }` envelope with `meta.request_id`. The clean Markdown in `data` becomes Jev state. Jev receives default page questions plus optional Boolean, Choice, or Score questions in one evaluation through Vercel AI Gateway using canonical model ID `typesafe-ai/jev` and `AI_GATEWAY_API_KEY`. The route returns a stable, sanitized JSON contract; provider errors never cross the boundary.
+The browser sends only a URL and at most three bounded custom judgment definitions to `POST /jev-web-analyzer/api/analyze`. The Next.js server validates the URL, resolves DNS, calls `GET https://api.replynodes.com/v1/webcontext/scrape?url=...` with `Authorization: Bearer ${REPLYNODES_API_KEY}`, and expects the successful `{ data, meta }` envelope with `meta.request_id`. The clean Markdown in `data` becomes Jev state. Jev receives default page questions plus optional Boolean, Choice, or Score questions in one evaluation through Vercel AI Gateway using canonical model ID `typesafe-ai/jev` and `AI_GATEWAY_API_KEY`. The route returns a stable, sanitized JSON contract; provider errors never cross the boundary.
 
 The server measures scrape, extraction, Jev, and total latency. Successful responses use a bounded five-minute in-memory cache keyed by a SHA-256 digest of the normalized URL and judgment definitions. No database, queue, Redis, or worker service is required.
 
@@ -36,7 +36,7 @@ pnpm install
 pnpm dev
 ```
 
-Open `http://localhost:3000`. There is no mock provider path, so analysis requires both credentials. Run the gates with:
+Open `http://localhost:3000/jev-web-analyzer/`. There is no mock provider path, so analysis requires both credentials. Run the gates with:
 
 ```bash
 pnpm test
@@ -50,7 +50,7 @@ For a real smoke, use a developer's own credentials without committing values:
 
 ```bash
 REPLYNODES_API_KEY="$REPLYNODES_API_KEY" AI_GATEWAY_API_KEY="$AI_GATEWAY_API_KEY" pnpm dev
-curl -sS -X POST http://localhost:3000/api/analyze \
+curl -sS -X POST http://localhost:3000/jev-web-analyzer/api/analyze \
   -H 'content-type: application/json' \
   --data '{"url":"https://example.com","judgments":[]}'
 ```
@@ -59,7 +59,7 @@ Do not call the smoke successful unless it returns HTTP 200 with a real ReplyNod
 
 ## Live demo and deployment
 
-The intended live demo URL is `https://jev.replynodes.com` when deployed by the project owner. Deploy the verified Next.js build with existing Vercel Labs/Vercel conventions and configure only `REPLYNODES_API_KEY` and `AI_GATEWAY_API_KEY` as server environment variables. Verify the page, assets, API errors, and an authorized safe public analysis before sharing. This repository does not create a GitHub repository, push branches, or deploy infrastructure.
+The live demo is `https://replynodes.com/jev-web-analyzer/`. For deployment, run the verified Next.js service on loopback and configure only `REPLYNODES_API_KEY` and `AI_GATEWAY_API_KEY` as server environment variables. Configure nginx to proxy `/jev-web-analyzer/` to the loopback Next service while preserving the `/jev-web-analyzer/` prefix, including for `/jev-web-analyzer/api/analyze`; the Next.js `basePath` then resolves the existing `app/api/analyze/route.ts` route. Verify the page, assets, API errors, and an authorized safe public analysis before sharing. This repository does not create a GitHub repository, push branches, or deploy infrastructure.
 
 ## Made with Jev
 

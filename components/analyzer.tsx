@@ -5,6 +5,7 @@ import { AlertCircle, Check, ChevronDown, LoaderCircle, Plus, Trash2 } from "luc
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { ANALYZE_API_PATH } from "@/lib/analyze-path";
 
 type Judgment = { name: string; type: "boolean" | "choice" | "score"; instructions: string; criteria: string };
 type Result = { url: string; classifications: Answer[]; judgments: Answer[]; timeline: { startedAt: string; scrapeMs: number; extractMs: number; jevMs: number; totalMs: number }; usage: { characters: number; inputTokens?: number; outputTokens?: number }; model: { requested: "jev-latest"; resolved?: string }; scrape: { requestId: string; markdownPreview: string } };
@@ -17,7 +18,7 @@ export function Analyzer() {
     setLoading(true); setError(""); setResult(undefined);
     try {
       const body = { url, judgments: judgments.map(({ name, type, instructions, criteria }) => ({ name, question: { type, instructions, ...(type === "choice" ? { criteria: Object.fromEntries(criteria.split("\n").map((item) => { const [key, ...rest] = item.split(":"); return [key.trim(), rest.join(":").trim()]; })) } : type === "score" ? { criteria: criteria.split("\n").map((item) => item.trim()).filter(Boolean) } : {}) } })) };
-      const response = await fetch("/api/analyze", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) }); const data = await response.json(); if (!response.ok) throw new Error(data.error?.message || "Analysis failed."); setResult(data);
+      const response = await fetch(ANALYZE_API_PATH, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) }); const data = await response.json(); if (!response.ok) throw new Error(data.error?.message || "Analysis failed."); setResult(data);
     } catch (e) { setError(e instanceof Error ? e.message : "Analysis failed."); } finally { setLoading(false); }
   }
   function update(index: number, patch: Partial<Judgment>) { setJudgments(judgments.map((item, i) => i === index ? { ...item, ...patch } : item)); }
