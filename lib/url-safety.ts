@@ -35,12 +35,15 @@ export function isBlockedAddress(address: string) {
   return net.isIPv4(address) ? privateIpv4(address) : net.isIPv6(address) ? privateIpv6(address) : false;
 }
 
-export async function validatePublicUrl(input: string): Promise<URL> {
+type DnsLookup = (hostname: string, options: { all: true; verbatim: true }) => Promise<{ address: string }[]>;
+
+export async function validatePublicUrl(input: string, lookup: DnsLookup = dns.lookup): Promise<URL> {
   let url: URL;
   try { url = new URL(input); } catch { throw new Error("INVALID_URL"); }
   if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password || url.hash) throw new Error("INVALID_URL");
   if (url.hostname === "localhost" || url.hostname.endsWith(".localhost") || url.hostname.endsWith(".internal") || net.isIP(url.hostname) && isBlockedAddress(url.hostname)) throw new Error("BLOCKED_URL");
-  const addresses = await dns.lookup(url.hostname, { all: true, verbatim: true });
+  let addresses: { address: string }[];
+  try { addresses = await lookup(url.hostname, { all: true, verbatim: true }); } catch { throw new Error("DNS_LOOKUP_FAILED"); }
   if (!addresses.length || addresses.some(({ address }) => !net.isIP(address) || isBlockedAddress(address))) throw new Error("BLOCKED_URL");
   return url;
 }
@@ -56,12 +59,14 @@ export async function fetchPublicMarkdown(input: string, apiKey: string, fetcher
       });
     } catch (error) {
       if (error instanceof Error && error.name === "TimeoutError") throw new Error("FETCH_TIMEOUT");
-      throw error;
+      throw new Error("PROVIDER_UNREACHABLE");
     }
     if (response.status >= 300 && response.status < 400) {
       const location = response.headers.get("location");
-      if (!location || redirect === MAX_REDIRECTS) throw new Error("FETCH_FAILED");
-      url = await validatePublicUrl(new URL(location, url).toString());
+      if (!location || redirect === MAX_REDIRECTS) throw new Error("PROVIDER_BAD_RESPONSE");
+      let redirectTarget: string;
+      try { redirectTarget = new URL(location, url).toString(); } catch { throw new Error("PROVIDER_BAD_RESPONSE"); }
+      url = await validatePublicUrl(redirectTarget);
       continue;
     }
     if (!response.ok) {
@@ -73,20 +78,26 @@ export async function fetchPublicMarkdown(input: string, apiKey: string, fetcher
     const contentLength = Number(response.headers.get("content-length") ?? 0);
     if (contentLength > MAX_RESPONSE_BYTES) throw new Error("RESPONSE_TOO_LARGE");
     const reader = response.body?.getReader();
-    if (!reader) throw new Error("FETCH_FAILED");
+    if (!reader) throw new Error("PROVIDER_BAD_RESPONSE");
     const chunks: Uint8Array[] = [];
     let size = 0;
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      size += value.byteLength;
-      if (size > MAX_RESPONSE_BYTES) { await reader.cancel(); throw new Error("RESPONSE_TOO_LARGE"); }
-      chunks.push(value);
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        size += value.byteLength;
+        if (size > MAX_RESPONSE_BYTES) { await reader.cancel(); throw new Error("RESPONSE_TOO_LARGE"); }
+        chunks.push(value);
+      }
+    } catch (error) {
+      if (error instanceof Error && error.message === "RESPONSE_TOO_LARGE") throw error;
+      throw new Error("PROVIDER_UNREACHABLE");
     }
-    const body = JSON.parse(new TextDecoder().decode(Buffer.concat(chunks)));
+    let body;
+    try { body = JSON.parse(new TextDecoder().decode(Buffer.concat(chunks))); } catch { throw new Error("PROVIDER_BAD_RESPONSE"); }
     const data = body?.data;
     const markdown = typeof data === "string" ? data : data?.markdown ?? data?.content ?? data?.text;
-    if (typeof markdown !== "string" || !markdown.trim() || typeof body?.meta?.request_id !== "string") throw new Error("INVALID_PROVIDER_RESPONSE");
+    if (typeof markdown !== "string" || !markdown.trim() || typeof body?.meta?.request_id !== "string") throw new Error("PROVIDER_BAD_RESPONSE");
     const providerFinalUrl = [body.meta.final_url, body.meta.finalUrl, body.meta.url].find((value: unknown) => typeof value === "string");
     let finalUrl = url.toString();
     if (providerFinalUrl) {
@@ -95,5 +106,5 @@ export async function fetchPublicMarkdown(input: string, apiKey: string, fetcher
     const providerStatus = [body.meta.status, body.meta.status_code].find((value: unknown) => typeof value === "number" && Number.isInteger(value) && value >= 100 && value <= 599);
     return { url: finalUrl, markdown: markdown.slice(0, MAX_RESPONSE_BYTES), requestId: body.meta.request_id, status: providerStatus ?? response.status };
   }
-  throw new Error("FETCH_FAILED");
+  throw new Error("PROVIDER_BAD_RESPONSE");
 }
