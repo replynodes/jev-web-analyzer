@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { judgmentInputSchema, requestSchema, sanitizeAnswer, sanitizeResolvedModel } from "./contracts";
+import { DEFAULT_QUESTIONS } from "./founder-questions";
 
 describe("contracts", () => {
   it("bounds judgment definitions", () => {
@@ -7,9 +8,16 @@ describe("contracts", () => {
     expect(judgmentInputSchema.safeParse({ name: "bad name", question: { type: "boolean", instructions: "Is it useful?" } }).success).toBe(false);
     expect(requestSchema.safeParse({ url: "https://example.com", judgments: [] }).success).toBe(true);
   });
+  it("accepts the exact sixteen-option CTA contract", () => {
+    const question = DEFAULT_QUESTIONS.cta_signal;
+    expect(Object.keys(question.criteria)).toHaveLength(16);
+    expect(judgmentInputSchema.safeParse({ name: "cta_signal", question }).success).toBe(true);
+  });
   it("sanitizes only provider answer fields", () => {
     expect(sanitizeAnswer("x", { probability: 0.8, confidence: 0.7, secret: "no" }, "boolean")).toEqual({ name: "x", type: "boolean", value: true, probabilities: { true: 0.8, false: 0.19999999999999996 } });
     expect(sanitizeAnswer("x", { choice: "billing", probabilities: { billing: 1, bad: "x" } }, "choice")).toEqual({ name: "x", type: "choice", value: "billing", probabilities: { billing: 1 } });
+    expect(sanitizeAnswer("x", { choice: "billing", reason: "Visible pricing supports this." }, "choice")).toMatchObject({ reason: "Visible pricing supports this." });
+    expect(sanitizeAnswer("x", { choice: "billing", explanation: "\u0000secret" }, "choice")).not.toHaveProperty("reason");
   });
   it("extracts a resolved model only from sanitized provider metadata", () => {
     expect(sanitizeResolvedModel({ typesafe: { resolvedModelId: "jev-1.13.0" } })).toBe("jev-1.13.0");

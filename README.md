@@ -2,7 +2,9 @@
 
 See what a first-time visitor is likely to understand from your SaaS website.
 
-**ReplyNodes fetches your live website. Jev evaluates what it communicates about your audience, positioning, differentiation, trust, and conversion.**
+A focused outside-in, probabilistic teardown: enter a public SaaS URL, let ReplyNodes fetch clean Markdown, then send that state to Jev through the Vercel AI Gateway for ten structured founder judgments about what the site communicates to a first-time visitor. It is a developer demo, not a ReplyNodes marketing site, SEO score, objective company or product rating, AI detector, customer-research replacement, or definitive SaaS score.
+
+The public requested model alias is exactly `jev-latest`. Vercel AI Gateway's canonical evaluation model ID is `typesafe-ai/jev`, which routes the Jev latest model; this project does not claim an exact underlying version.
 
 **[Try the live demo →](https://replynodes.com/jev-web-analyzer/)**
 
@@ -26,6 +28,22 @@ See what a first-time visitor is likely to understand from your SaaS website.
 </table>
 
 **Web context by ReplyNodes · Judgments by Jev · Routed through Vercel AI Gateway**
+
+## Architecture
+
+The browser sends only a URL and at most three bounded custom judgment definitions to `POST /jev-web-analyzer/api/analyze`. The Next.js server validates the URL, resolves DNS, calls `GET https://api.replynodes.com/v1/webcontext/scrape?url=...` with `Authorization: Bearer ${REPLYNODES_API_KEY}`, and expects the successful `{ data, meta }` envelope with `meta.request_id`. The clean Markdown in `data` becomes Jev state. Jev receives exactly ten bounded founder questions—clarity, audience, value proposition, differentiation, reason to choose, CTA signal, trust, self-serve motion, copy specificity, and change-first—plus optional Boolean, Choice, or Score questions, in one evaluation through Vercel AI Gateway using canonical model ID `typesafe-ai/jev` and `AI_GATEWAY_API_KEY`. The default response is a stable, sanitized JSON contract. With `Accept: application/x-ndjson`, the same operation emits flushed typed events in awaited order; failures emit a sanitized `error` event, and cache hits emit a compact trace using the recorded result without pretending to fetch again.
+
+The server measures ReplyNodes scrape, extraction, Jev, and total latency. Successful responses use a bounded five-minute in-memory cache keyed by a SHA-256 digest of the normalized URL and judgment definitions. There is no database, auth system, queue, Redis, worker service, persistent user data, or provider mock.
+
+Streaming responses use `application/x-ndjson; charset=utf-8`, `Cache-Control: no-cache`, and `X-Accel-Buffering: no`. If nginx fronts the service, disable proxy buffering for the analysis location so real stage events can arrive progressively. The UI displays only measured timings, returned token usage, returned probabilities, and explicit provider metadata.
+
+## Security decisions
+
+- Credentials are server-only environment variables and are never included in client code, HTML, logs, or responses.
+- URLs are HTTP(S)-only and reject credentials, fragments, localhost, private/link-local/reserved IPv4 and IPv6, and DNS names resolving to blocked addresses. The request is bounded by timeout, response-size, and redirect limits; ReplyNodes remains the fetch boundary for the target page.
+- Request JSON, URL length, question count, names, instructions, labels, options, and rubric sizes are bounded with Zod. Website text is untrusted state, not application instructions.
+- A bounded in-memory per-IP token bucket provides basic abuse protection for a single-instance demo. The cache contains only sanitized successful responses and expires automatically.
+- A resolved model/version is displayed only when explicit, allowlisted provider metadata supplies a sanitized value. The app never treats the SDK response model ID or the `jev-latest` alias as a resolved version.
 
 > **Unofficial community project, not affiliated with TypeSafe AI.**
 
@@ -298,9 +316,11 @@ Never expose these values to the browser.
 
 ---
 
-## Made with Jev
+## Positioning and non-goals
 
-Jev is responsible for the structured probabilistic judgments in this experiment. ReplyNodes provides the live web context Jev evaluates.
+Founders struggle to see their site like first-time visitors. ReplyNodes retrieves live web content and converts it to clean context; Jev makes structured probabilistic judgments from that context. The result is an outside-in founder teardown, not a definitive rating. It does not infer company trustworthiness, claim copy is AI-generated, or replace customer research. Native provider probability distributions and explicit provider confidence are preserved when returned; optional safe provider reasons are displayed only when returned.
+
+The Vercel Labs AI SDK Gateway Demo license and credit remain in [LICENSE](./LICENSE).
 
 A concise description for showcase listings:
 

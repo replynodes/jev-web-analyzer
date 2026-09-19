@@ -12,7 +12,7 @@ export const judgmentSchema = z.discriminatedUnion("type", [
     type: z.literal("choice"),
     instructions: z.string().trim().min(3).max(240),
     criteria: z.record(z.string().regex(LABEL), z.string().trim().min(1).max(160))
-      .refine((value) => Object.keys(value).length >= 2 && Object.keys(value).length <= 10),
+      .refine((value) => Object.keys(value).length >= 2 && Object.keys(value).length <= 20),
   }),
   z.object({
     type: z.literal("score"),
@@ -41,6 +41,7 @@ export const answerSchema = z.object({
   confidence: z.number().min(0).max(1).optional(),
   question: z.string().max(240).optional(),
   instructions: z.string().max(240).optional(),
+  reason: z.string().max(240).optional(),
 });
 
 export const analysisResponseSchema = z.object({
@@ -98,6 +99,13 @@ function sanitizeConfidence(providerMetadata: unknown, questionId: string) {
   return typeof value === "number" && Number.isFinite(value) && value >= 0 && value <= 1 ? value : undefined;
 }
 
+function sanitizeReason(item: Record<string, unknown>) {
+  const candidate = typeof item.reason === "string" ? item.reason : typeof item.explanation === "string" ? item.explanation : undefined;
+  if (!candidate || candidate.length > 240 || /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/.test(candidate)) return undefined;
+  const reason = candidate.trim();
+  return reason.length >= 3 ? reason : undefined;
+}
+
 export function sanitizeAnswer(name: string, raw: unknown, expectedType: "boolean" | "choice" | "score", providerMetadata?: unknown) {
   if (!raw || typeof raw !== "object") return null;
   const item = raw as Record<string, unknown>;
@@ -116,7 +124,8 @@ export function sanitizeAnswer(name: string, raw: unknown, expectedType: "boolea
   const confidence = sanitizeConfidence(providerMetadata, name);
   const booleanProbabilities = booleanProbability === null ? undefined : { true: booleanProbability, false: 1 - booleanProbability };
   const outputProbabilities = expectedType === "boolean" ? booleanProbabilities : safeProbabilities && Object.keys(safeProbabilities).length ? safeProbabilities : undefined;
-  return { name, type: expectedType, value: safeValue, ...(outputProbabilities ? { probabilities: outputProbabilities } : {}), ...(confidence === undefined ? {} : { confidence }) };
+  const reason = sanitizeReason(item);
+  return { name, type: expectedType, value: safeValue, ...(outputProbabilities ? { probabilities: outputProbabilities } : {}), ...(confidence === undefined ? {} : { confidence }), ...(reason ? { reason } : {}) };
 }
 
 export function withPromptMetadata(
