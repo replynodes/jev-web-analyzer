@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { judgmentInputSchema, requestSchema, sanitizeAnswer, sanitizeResolvedModel } from "./contracts";
+import { analysisResponseSchema, judgmentInputSchema, requestSchema, sanitizeAnswer, sanitizeResolvedModel } from "./contracts";
 import { DEFAULT_QUESTIONS } from "./founder-questions";
+import { ANALYSIS_CONTEXT_CAP } from "./analysis-context";
 
 describe("contracts", () => {
   it("bounds judgment definitions", () => {
@@ -34,5 +35,10 @@ describe("contracts", () => {
     expect(sanitizeAnswer("z", { choice: "a", probabilities: { a: 0.4, b: 1.2, c: -0.1 } }, "choice", metadata)).toEqual({ name: "z", type: "choice", value: "a", probabilities: { a: 0.4 } });
     expect(sanitizeAnswer("x", { probability: 0.5 }, "boolean", { typesafe: { confidence: 1.1 } })).toEqual({ name: "x", type: "boolean", value: true, probabilities: { true: 0.5, false: 0.5 } });
     expect(sanitizeAnswer("x", { probability: Number.NaN }, "boolean", metadata)).toBeNull();
+  });
+  it("requires bounded, truthful scrape metadata", () => {
+    const base = { url: "https://example.com", classifications: [], judgments: [], timeline: { startedAt: new Date().toISOString(), scrapeMs: 1, extractMs: 1, jevMs: 1, totalMs: 3 }, usage: { characters: ANALYSIS_CONTEXT_CAP }, model: { requested: "jev-latest" as const } };
+    expect(analysisResponseSchema.safeParse({ ...base, scrape: { requestId: "req", markdownPreview: "x".repeat(ANALYSIS_CONTEXT_CAP), markdownCharacters: ANALYSIS_CONTEXT_CAP, sourceCharacters: ANALYSIS_CONTEXT_CAP + 234, markdownTruncated: true } }).success).toBe(true);
+    expect(analysisResponseSchema.safeParse({ ...base, scrape: { requestId: "req", markdownPreview: "x".repeat(ANALYSIS_CONTEXT_CAP + 1), markdownCharacters: ANALYSIS_CONTEXT_CAP + 1, sourceCharacters: ANALYSIS_CONTEXT_CAP + 1, markdownTruncated: true } }).success).toBe(false);
   });
 });

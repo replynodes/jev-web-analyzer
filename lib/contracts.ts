@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ANALYSIS_CONTEXT_CAP } from "./analysis-context";
 
 const NAME = /^[a-z][a-z0-9_-]{0,31}$/;
 const LABEL = /^[a-zA-Z0-9][a-zA-Z0-9 _-]{0,47}$/;
@@ -57,9 +58,9 @@ export const analysisResponseSchema = z.object({
     fetchStatus: z.number().int().nonnegative().optional(),
     finalUrl: z.string().url().optional(),
   }),
-  usage: z.object({ inputTokens: z.number().nonnegative().optional(), outputTokens: z.number().nonnegative().optional(), characters: z.number().nonnegative() }),
+  usage: z.object({ inputTokens: z.number().nonnegative().optional(), outputTokens: z.number().nonnegative().optional(), characters: z.number().int().nonnegative().max(ANALYSIS_CONTEXT_CAP) }),
   model: z.object({ requested: z.literal("jev-latest"), resolved: z.string().optional() }),
-  scrape: z.object({ requestId: z.string().max(200), markdownPreview: z.string().max(4000) }),
+  scrape: z.object({ requestId: z.string().max(200), markdownPreview: z.string().max(ANALYSIS_CONTEXT_CAP), markdownCharacters: z.number().int().nonnegative().max(ANALYSIS_CONTEXT_CAP), sourceCharacters: z.number().int().nonnegative(), markdownTruncated: z.boolean() }),
 });
 
 export type AnalysisResponse = z.infer<typeof analysisResponseSchema>;

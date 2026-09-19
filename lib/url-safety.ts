@@ -2,7 +2,7 @@ import dns from "node:dns/promises";
 import net from "node:net";
 
 export const MAX_REDIRECTS = 3;
-export const FETCH_TIMEOUT_MS = 15_000;
+export const FETCH_TIMEOUT_MS = 25_000;
 export const MAX_RESPONSE_BYTES = 1_500_000;
 
 function privateIpv4(address: string) {
@@ -48,10 +48,16 @@ export async function validatePublicUrl(input: string): Promise<URL> {
 export async function fetchPublicMarkdown(input: string, apiKey: string, fetcher = fetch) {
   let url = await validatePublicUrl(input);
   for (let redirect = 0; redirect <= MAX_REDIRECTS; redirect++) {
-    const response = await fetcher(`https://api.replynodes.com/v1/webcontext/scrape?url=${encodeURIComponent(url.toString())}`, {
-      headers: { Authorization: `Bearer ${apiKey}`, Accept: "application/json" },
-      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
-    });
+    let response: Response;
+    try {
+      response = await fetcher(`https://api.replynodes.com/v1/webcontext/scrape?url=${encodeURIComponent(url.toString())}`, {
+        headers: { Authorization: `Bearer ${apiKey}`, Accept: "application/json" },
+        signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+      });
+    } catch (error) {
+      if (error instanceof Error && error.name === "TimeoutError") throw new Error("FETCH_TIMEOUT");
+      throw error;
+    }
     if (response.status >= 300 && response.status < 400) {
       const location = response.headers.get("location");
       if (!location || redirect === MAX_REDIRECTS) throw new Error("FETCH_FAILED");

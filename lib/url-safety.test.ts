@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isBlockedAddress, validatePublicUrl } from "./url-safety";
+import { fetchPublicMarkdown, isBlockedAddress, validatePublicUrl } from "./url-safety";
 
 describe("URL safety", () => {
   it("blocks private and non-web destinations", async () => {
@@ -25,5 +25,15 @@ describe("URL safety", () => {
   it("rejects credentials and fragments", async () => {
     await expect(validatePublicUrl("https://user:pass@example.com")).rejects.toThrow("INVALID_URL");
     await expect(validatePublicUrl("https://example.com/#fragment")).rejects.toThrow("INVALID_URL");
+  });
+  it("reports a distinct timeout error instead of an opaque provider failure", async () => {
+    const timeoutError = Object.assign(new Error("The operation was aborted due to timeout"), { name: "TimeoutError" });
+    const timedOutFetcher = () => Promise.reject(timeoutError);
+    await expect(fetchPublicMarkdown("https://example.com", "test-key", timedOutFetcher)).rejects.toThrow("FETCH_TIMEOUT");
+  });
+  it("does not relabel unrelated fetch failures as a timeout", async () => {
+    const networkError = new Error("network down");
+    const failingFetcher = () => Promise.reject(networkError);
+    await expect(fetchPublicMarkdown("https://example.com", "test-key", failingFetcher)).rejects.toBe(networkError);
   });
 });

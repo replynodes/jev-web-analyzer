@@ -46,4 +46,7 @@ describe("analyze route errors", () => {
   it("keeps validation failures actionable without leaking internals", () => {
     expect(safeError(new Error("BLOCKED_URL")).status).toBe(400);
   });
+  it("reports scrape timeouts as an actionable gateway timeout instead of a generic upstream failure", () => {
+    expect(safeError(new Error("FETCH_TIMEOUT"))).toEqual({ status: 504, code: "FETCH_TIMEOUT", message: "The website took too long to respond and could not be analyzed. Please try again." });
+  });
 });
