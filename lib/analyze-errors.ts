@@ -8,6 +8,6 @@ export function safeError(error: unknown) {
   if (code === "PROVIDER_RATE_LIMITED") return { status: 503, code, message: "The web content service is receiving too many requests right now. Please try again shortly." };
   if (code === "PROVIDER_UNAVAILABLE" || code === "PROVIDER_UNREACHABLE") return { status: 503, code, message: "The web content service is temporarily unavailable. Please try again." };
   if (code === "PROVIDER_UNAUTHORIZED") return { status: 503, code, message: "Analysis is temporarily unavailable." };
-  if (code === "PROVIDER_BAD_RESPONSE" || code === "INVALID_PROVIDER_RESPONSE") return { status: 502, code, message: "The analysis could not be completed. Please try again." };
+  if (code === "PROVIDER_BAD_RESPONSE" || code === "INVALID_PROVIDER_RESPONSE") return { status: 502, code, message: "ReplyNodes returned no usable clean Markdown for this website. It may be a client-rendered page or block automated access. Try a different URL." };
   return { status: 502, code: "UPSTREAM_FAILED", message: "The analysis could not be completed. Please try again." };
 }

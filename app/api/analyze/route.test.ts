@@ -58,7 +58,7 @@ describe("analyze route errors", () => {
   it("distinguishes pre-fetch DNS failures, provider network failures, and malformed provider responses instead of collapsing them into UPSTREAM_FAILED", () => {
     expect(safeError(new Error("DNS_LOOKUP_FAILED"))).toEqual({ status: 502, code: "DNS_LOOKUP_FAILED", message: "This website's address could not be found. Check the URL and try again." });
     expect(safeError(new Error("PROVIDER_UNREACHABLE"))).toEqual({ status: 503, code: "PROVIDER_UNREACHABLE", message: "The web content service is temporarily unavailable. Please try again." });
-    expect(safeError(new Error("PROVIDER_BAD_RESPONSE"))).toEqual({ status: 502, code: "PROVIDER_BAD_RESPONSE", message: "The analysis could not be completed. Please try again." });
-    expect(safeError(new Error("INVALID_PROVIDER_RESPONSE"))).toEqual({ status: 502, code: "INVALID_PROVIDER_RESPONSE", message: "The analysis could not be completed. Please try again." });
+    expect(safeError(new Error("PROVIDER_BAD_RESPONSE"))).toEqual({ status: 502, code: "PROVIDER_BAD_RESPONSE", message: "ReplyNodes returned no usable clean Markdown for this website. It may be a client-rendered page or block automated access. Try a different URL." });
+    expect(safeError(new Error("INVALID_PROVIDER_RESPONSE"))).toEqual({ status: 502, code: "INVALID_PROVIDER_RESPONSE", message: "ReplyNodes returned no usable clean Markdown for this website. It may be a client-rendered page or block automated access. Try a different URL." });
   });
 });
