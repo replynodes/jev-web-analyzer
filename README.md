@@ -6,6 +6,27 @@ See what a first-time visitor is likely to understand from your SaaS website.
 
 **[Try the live demo →](https://replynodes.com/jev-web-analyzer/)**
 
+### Built with
+
+<table>
+  <tr>
+    <td align="center" width="220">
+      <a href="https://replynodes.com/"><img src="./public/brand/replynodes.svg" alt="ReplyNodes" height="34"></a><br>
+      <sub>Live web context</sub>
+    </td>
+    <td align="center" width="220">
+      <a href="https://typesafe.ai/"><img src="./public/brand/typesafe-jev.svg" alt="Jev by TypeSafe AI" height="34"></a><br>
+      <sub>Jev by TypeSafe AI · probabilistic judgments</sub>
+    </td>
+    <td align="center" width="220">
+      <a href="https://vercel.com/ai-gateway"><img src="./public/brand/vercel.svg" alt="Vercel" height="28"></a><br>
+      <sub>Vercel AI Gateway · model routing</sub>
+    </td>
+  </tr>
+</table>
+
+**Web context by ReplyNodes · Judgments by Jev · Routed through Vercel AI Gateway**
+
 > **Unofficial community project, not affiliated with TypeSafe AI.**
 
 ---
