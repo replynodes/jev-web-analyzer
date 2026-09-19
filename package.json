@@ -1,20 +1,21 @@
 {
-  "name": "ai-sdk-gateway-demo",
+  "name": "jev-web-analyzer",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "type-check": "tsc --noEmit"
+    "lint": "eslint .",
+    "type-check": "tsc --noEmit",
+    "test": "vitest run"
   },
   "dependencies": {
-    "@ai-sdk/gateway": "2.0.27",
+    "@ai-sdk/gateway": "4.0.87",
     "@ai-sdk/react": "2.0.123",
     "@radix-ui/react-select": "^2.2.2",
     "@radix-ui/react-slot": "^1.2.0",
-    "ai": "5.0.121",
+    "ai": "7.0.107",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.506.0",
@@ -36,7 +37,8 @@
     "eslint": "^9.25.1",
     "eslint-config-next": "15.3.6",
     "tailwindcss": "^4.1.5",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "3.2.4"
   },
   "packageManager": "pnpm@10.6.2+sha512.47870716bea1572b53df34ad8647b42962bc790ce2bf4562ba0f643237d7302a3d6a8ecef9e4bdfc01d23af1969aa90485d4cebb0b9638fa5ef1daef656f6c1b"
 }
