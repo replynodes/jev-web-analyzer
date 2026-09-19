@@ -64,7 +64,12 @@ export async function fetchPublicMarkdown(input: string, apiKey: string, fetcher
       url = await validatePublicUrl(new URL(location, url).toString());
       continue;
     }
-    if (!response.ok) throw new Error("FETCH_FAILED");
+    if (!response.ok) {
+      if (response.status === 429) throw new Error("PROVIDER_RATE_LIMITED");
+      if (response.status === 401 || response.status === 403) throw new Error("PROVIDER_UNAUTHORIZED");
+      if (response.status >= 500) throw new Error("PROVIDER_UNAVAILABLE");
+      throw new Error("SITE_UNREACHABLE");
+    }
     const contentLength = Number(response.headers.get("content-length") ?? 0);
     if (contentLength > MAX_RESPONSE_BYTES) throw new Error("RESPONSE_TOO_LARGE");
     const reader = response.body?.getReader();

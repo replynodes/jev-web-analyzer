@@ -36,4 +36,12 @@ describe("URL safety", () => {
     const failingFetcher = () => Promise.reject(networkError);
     await expect(fetchPublicMarkdown("https://example.com", "test-key", failingFetcher)).rejects.toBe(networkError);
   });
+  it("classifies a fast non-2xx provider response by status instead of collapsing every rejection into the same opaque failure", async () => {
+    const fakeResponse = (status: number) => ({ ok: false, status, headers: { get: () => null } }) as unknown as Response;
+    await expect(fetchPublicMarkdown("https://example.com", "test-key", () => Promise.resolve(fakeResponse(429)))).rejects.toThrow("PROVIDER_RATE_LIMITED");
+    await expect(fetchPublicMarkdown("https://example.com", "test-key", () => Promise.resolve(fakeResponse(401)))).rejects.toThrow("PROVIDER_UNAUTHORIZED");
+    await expect(fetchPublicMarkdown("https://example.com", "test-key", () => Promise.resolve(fakeResponse(403)))).rejects.toThrow("PROVIDER_UNAUTHORIZED");
+    await expect(fetchPublicMarkdown("https://example.com", "test-key", () => Promise.resolve(fakeResponse(503)))).rejects.toThrow("PROVIDER_UNAVAILABLE");
+    await expect(fetchPublicMarkdown("https://example.com", "test-key", () => Promise.resolve(fakeResponse(400)))).rejects.toThrow("SITE_UNREACHABLE");
+  });
 });

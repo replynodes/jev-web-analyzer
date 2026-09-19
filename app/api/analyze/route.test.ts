@@ -49,4 +49,10 @@ describe("analyze route errors", () => {
   it("reports scrape timeouts as an actionable gateway timeout instead of a generic upstream failure", () => {
     expect(safeError(new Error("FETCH_TIMEOUT"))).toEqual({ status: 504, code: "FETCH_TIMEOUT", message: "The website took too long to respond and could not be analyzed. Please try again." });
   });
+  it("reports a fast non-2xx provider rejection with its own actionable classification instead of the generic upstream failure", () => {
+    expect(safeError(new Error("PROVIDER_RATE_LIMITED")).status).toBe(503);
+    expect(safeError(new Error("PROVIDER_UNAVAILABLE")).status).toBe(503);
+    expect(safeError(new Error("PROVIDER_UNAUTHORIZED")).status).toBe(503);
+    expect(safeError(new Error("SITE_UNREACHABLE"))).toEqual({ status: 502, code: "SITE_UNREACHABLE", message: "This website could not be retrieved for analysis. It may block automated access, require a login, or be unavailable. Try a different URL." });
+  });
 });
