@@ -29,6 +29,9 @@ function fail(status: number, code: string, message: string) {
 function normalizeQuestions(judgments: JudgmentInput[]) {
   return Object.fromEntries(judgments.map(({ name, question }) => [name, question]));
 }
+export function GET() {
+  return NextResponse.json({ message: "Use POST /jev-web-analyzer/api/analyze to analyze a URL." }, { status: 405, headers: { Allow: "POST" } });
+}
 export async function POST(request: Request) {
   if (!allowRequest(clientIp(request))) return fail(429, "RATE_LIMITED", "Too many requests. Please try again shortly.");
   if (!process.env.REPLYNODES_API_KEY || !process.env.AI_GATEWAY_API_KEY) return fail(503, "NOT_CONFIGURED", "Analysis is temporarily unavailable.");
