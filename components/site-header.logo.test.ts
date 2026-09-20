@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
-const source = readFileSync(new URL("./analyzer.tsx", import.meta.url), "utf8");
+const source = readFileSync(new URL("./site-header.tsx", import.meta.url), "utf8");
 
 describe("header logo contract", () => {
   it("does not render the full 160x32 wordmark asset", () => {
@@ -23,7 +23,7 @@ describe("header logo contract", () => {
     expect(source).toMatch(/href="https:\/\/replynodes\.com\/"[^>]*aria-label="ReplyNodes home"/);
   });
 
-  it("keeps the jev web analyzer suffix next to the logo", () => {
-    expect(source).toContain("jev web analyzer");
+  it("renders the breadcrumb crumb passed by the calling page", () => {
+    expect(source).toContain("{crumb}");
   });
 });

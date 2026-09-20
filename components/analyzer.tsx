@@ -1,54 +1,107 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { AlertCircle, Check, ChevronDown, Circle, Copy, LoaderCircle, Plus, Trash2, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { LoaderCircle, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ThemeToggle } from "@/components/theme-toggle";
-import { ANALYZE_API_PATH } from "@/lib/analyze-path";
-import { flushNdjsonRemainder, parseNdjsonChunk, reduceTrace, type AnalysisEvent, type TraceState } from "@/lib/analysis-trace";
-import { customAnswerTitle, displayAnswerValue } from "@/lib/answer-display";
-import { answersForSection, founderSynthesis, FOUNDER_SECTIONS, readableAnswer, splitCtaSignal } from "@/lib/founder-summary";
-import { safeInitialUrl, withAnalyzedUrl } from "@/lib/query-url";
+import { SiteHeader } from "@/components/site-header";
 import { EXAMPLE_DOMAINS, exampleDomainUrl } from "@/lib/example-domains";
-import type { AnalysisResponse } from "@/lib/contracts";
-import { analysisContextLabel } from "@/lib/analysis-context";
-
-type Judgment = { name: string; type: "boolean" | "choice" | "score"; instructions: string; criteria: string };
-type Answer = AnalysisResponse["classifications"][number];
-const initialTrace: TraceState = { status: "pending", metrics: {} };
-const stages = [{ key: "fetch", title: "Fetch webpage with ReplyNodes" }, { key: "extract", title: "Extract clean Markdown" }, { key: "context", title: "Prepare context for Jev" }, { key: "jev", title: "Run 10 founder judgments via Jev" }, { key: "result", title: "Build analysis result" }] as const;
-type StageKey = typeof stages[number]["key"];
-
-function stageStatus(stage: StageKey, trace: TraceState): "pending" | "running" | "complete" | "failed" {
-  if (trace.status === "failed") return trace.completedStages?.includes(stage) ? "complete" : trace.activeStage === stage ? "failed" : "pending";
-  if (trace.completedStages?.includes(stage)) return "complete";
-  if (trace.activeStage === stage) return "running";
-  return "pending";
-}
+import { MAX_JUDGMENTS, type Judgment } from "@/lib/judgment";
+import { resultPath, safeInitialUrl } from "@/lib/query-url";
+import { saveSessionJudgments } from "@/lib/session-judgments";
 
 export function Analyzer() {
-  const [url, setUrl] = useState(""); const [judgments, setJudgments] = useState<Judgment[]>([]); const [result, setResult] = useState<AnalysisResponse>(); const [error, setError] = useState(""); const [loading, setLoading] = useState(false); const [trace, setTrace] = useState(initialTrace); const [showMarkdown, setShowMarkdown] = useState(false); const [copied, setCopied] = useState(false); const abortRef = useRef<AbortController | undefined>(undefined); const urlInputRef = useRef<HTMLInputElement>(null);
-  function fillExample(domain: string) { setUrl(exampleDomainUrl(domain)); urlInputRef.current?.focus(); }
-  useEffect(() => { setUrl(safeInitialUrl(new URLSearchParams(window.location.search).get("url"))); }, []); useEffect(() => () => abortRef.current?.abort(), []);
-  async function analyze() { abortRef.current?.abort(); const controller = new AbortController(); abortRef.current = controller; setLoading(true); setError(""); setTrace((state) => ({ ...initialTrace, result: state.result })); const body = { url, judgments: judgments.map(({ name, type, instructions, criteria }) => ({ name, question: { type, instructions, ...(type === "choice" ? { criteria: Object.fromEntries(criteria.split("\n").map((item) => { const [key, ...rest] = item.split(":"); return [key.trim(), rest.join(":").trim()]; })) } : type === "score" ? { criteria: criteria.split("\n").map((item) => item.trim()).filter(Boolean) } : {}) } })) };
-    try { const response = await fetch(ANALYZE_API_PATH, { method: "POST", headers: { "content-type": "application/json", accept: "application/x-ndjson" }, body: JSON.stringify(body), signal: controller.signal }); if (!response.ok && !response.body) { const data = await response.json(); throw new Error(data.error?.message || "Analysis failed."); } if (!response.body) throw new Error("The analysis stream was unavailable."); const reader = response.body.getReader(); const decoder = new TextDecoder(); let buffer = ""; let malformed = false; let receivedResult = false; let completedResult: AnalysisResponse | undefined; const apply = (event: AnalysisEvent) => { setTrace((state) => reduceTrace(state, event)); if (event.type === "result-built" || event.type === "done" || event.type === "cache-hit") { receivedResult = true; completedResult = event.result; setResult(event.result); } if (event.type === "error") throw new Error(event.message); }; while (true) { const part = await reader.read(); if (part.done) break; const parsed = parseNdjsonChunk(buffer, decoder.decode(part.value, { stream: true })); buffer = parsed.remainder; malformed ||= parsed.malformed; parsed.events.forEach(apply); } const tail = flushNdjsonRemainder(buffer + decoder.decode()); malformed ||= tail.malformed; tail.events.forEach(apply); if (malformed && !receivedResult) throw new Error("The analysis stream was malformed."); if (!receivedResult) throw new Error("The analysis did not return a result."); if (completedResult?.url) window.history.replaceState(null, "", withAnalyzedUrl(window.location.href, completedResult.url)); } catch (caught) { if (!controller.signal.aborted) setError(caught instanceof Error ? caught.message : "Analysis failed."); } finally { if (!controller.signal.aborted) setLoading(false); } }
-  function update(index: number, patch: Partial<Judgment>) { setJudgments((items) => items.map((item, i) => i === index ? { ...item, ...patch } : item)); } async function copyLink() { await navigator.clipboard?.writeText(withAnalyzedUrl(window.location.href, result?.url ?? url.trim())); setCopied(true); window.setTimeout(() => setCopied(false), 1500); }
-  return <main className="min-h-screen overflow-x-hidden px-4 py-5 md:px-8"><header className="mx-auto flex max-w-5xl items-center justify-between"><div className="flex min-w-0 items-center gap-2"><a href="https://replynodes.com/" target="_blank" rel="noreferrer" aria-label="ReplyNodes home" className="flex shrink-0 items-center gap-1.5"><svg width="20" height="20" viewBox="0 0 40 40" fill="none" aria-hidden="true"><rect width="40" height="40" rx="10" fill="#A2D98A" /><line x1="20" y1="20" x2="11" y2="11" stroke="#223835" strokeWidth="1.6" strokeLinecap="round" /><line x1="20" y1="20" x2="29" y2="11" stroke="#223835" strokeWidth="1.6" strokeLinecap="round" /><line x1="20" y1="20" x2="11" y2="29" stroke="#223835" strokeWidth="1.6" strokeLinecap="round" /><line x1="20" y1="20" x2="29" y2="29" stroke="#223835" strokeWidth="1.6" strokeLinecap="round" /><circle cx="11" cy="11" r="3" fill="#223835" /><circle cx="29" cy="11" r="3" fill="#223835" /><circle cx="11" cy="29" r="3" fill="#223835" /><circle cx="29" cy="29" r="3" fill="#223835" /><circle cx="20" cy="20" r="5.5" fill="#223835" /><circle cx="20" cy="20" r="3" fill="#A2D98A" /></svg><span className="text-sm font-semibold tracking-tight text-foreground">ReplyNodes</span></a><span className="text-muted-foreground">/</span><span className="truncate text-sm text-muted-foreground">jev web analyzer</span></div><ThemeToggle /></header><section className="mx-auto max-w-5xl pb-16 pt-16 md:pt-24"><div className="max-w-3xl"><p className="mb-5 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">What Does Jev Think About Your SaaS?</p><h1 className="text-4xl font-light tracking-tight md:text-6xl">Paste your SaaS website. See what Jev thinks your customers see.</h1><p className="mt-5 max-w-2xl text-base leading-7 text-muted-foreground">ReplyNodes reads your live website and Jev evaluates how clearly your product communicates its audience, value, differentiation, trust, and conversion intent.</p></div><div className="mt-10 rounded-2xl border bg-card p-3 shadow-border-medium md:p-4"><form onSubmit={(event) => { event.preventDefault(); if (url.trim() && !loading) void analyze(); }} className="flex flex-col gap-3 md:flex-row"><Input ref={urlInputRef} aria-label="Public URL" type="url" required value={url} onChange={(event) => setUrl(event.target.value)} placeholder="https://yourproduct.com" className="h-12 min-w-0 flex-1 border-0 bg-transparent text-base shadow-none focus-visible:ring-0" /><Button type="submit" disabled={loading || !url.trim()} className="h-12 rounded-xl px-6">{loading ? <LoaderCircle className="animate-spin" /> : null}{loading ? "Analyzing" : "Analyze →"}</Button></form></div><div className="mt-3 flex flex-wrap items-center gap-2"><span className="text-xs text-muted-foreground">Try:</span>{EXAMPLE_DOMAINS.map((domain) => <button key={domain} type="button" onClick={() => fillExample(domain)} className="flex min-h-11 items-center rounded-full border px-3 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground">{domain}</button>)}</div><p className="mt-3 text-xs text-muted-foreground">No signup. Uses your public website only.</p><CustomJudgments judgments={judgments} setJudgments={setJudgments} update={update} />{(loading || trace.result || error) && <Trace trace={trace} />}{error && <div role="alert" className="mt-6 flex items-center gap-2 rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive"><AlertCircle className="size-4" />{error}</div>}{result && <Results result={result} showMarkdown={showMarkdown} setShowMarkdown={setShowMarkdown} copyLink={() => void copyLink()} copied={copied} />}<footer className="mt-16 flex flex-col gap-2 border-t pt-5 text-xs text-muted-foreground md:flex-row md:justify-between"><span>Fetched with ReplyNodes · Jev via Vercel AI Gateway</span><span>Unofficial community project, not affiliated with TypeSafe AI.</span></footer></section></main>;
+  const router = useRouter();
+  const [url, setUrl] = useState("");
+  const [judgments, setJudgments] = useState<Judgment[]>([]);
+  const [submitting, setSubmitting] = useState(false);
+  const urlInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => { setUrl(safeInitialUrl(new URLSearchParams(window.location.search).get("url"))); }, []);
+
+  function fillExample(domain: string) {
+    setUrl(exampleDomainUrl(domain));
+    urlInputRef.current?.focus();
+  }
+
+  function update(index: number, patch: Partial<Judgment>) {
+    setJudgments((items) => items.map((item, i) => (i === index ? { ...item, ...patch } : item)));
+  }
+
+  function submit() {
+    const trimmed = url.trim();
+    if (!trimmed || submitting) return;
+    setSubmitting(true);
+    const target = safeInitialUrl(trimmed) || trimmed;
+    saveSessionJudgments(target, judgments);
+    router.push(resultPath(target));
+  }
+
+  return (
+    <main className="min-h-screen overflow-x-hidden px-4 py-5 md:px-8">
+      <SiteHeader crumb="jev web analyzer" />
+      <section className="mx-auto max-w-5xl pb-16 pt-16 md:pt-24">
+        <div className="max-w-3xl">
+          <p className="mb-5 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">What Does Jev Think About Your SaaS?</p>
+          <h1 className="text-4xl font-light tracking-tight md:text-6xl">Paste your SaaS website. See what Jev thinks your customers see.</h1>
+          <p className="mt-5 max-w-2xl text-base leading-7 text-muted-foreground">ReplyNodes reads your live website and Jev evaluates how clearly your product communicates its audience, value, differentiation, trust, and conversion intent.</p>
+        </div>
+        <div className="mt-10 rounded-2xl border bg-card p-3 shadow-border-medium md:p-4">
+          <form onSubmit={(event) => { event.preventDefault(); submit(); }} className="flex flex-col gap-3 md:flex-row">
+            <Input ref={urlInputRef} aria-label="Public URL" type="url" required value={url} onChange={(event) => setUrl(event.target.value)} placeholder="https://yourproduct.com" className="h-12 min-w-0 flex-1 border-0 bg-transparent text-base shadow-none focus-visible:ring-0" />
+            <Button type="submit" disabled={submitting || !url.trim()} className="h-12 rounded-xl px-6">
+              {submitting ? <LoaderCircle className="animate-spin" /> : null}
+              {submitting ? "Opening" : "Analyze →"}
+            </Button>
+          </form>
+        </div>
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <span className="text-xs text-muted-foreground">Try:</span>
+          {EXAMPLE_DOMAINS.map((domain) => (
+            <button key={domain} type="button" onClick={() => fillExample(domain)} className="flex min-h-11 items-center rounded-full border px-3 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground">
+              {domain}
+            </button>
+          ))}
+        </div>
+        <p className="mt-3 text-xs text-muted-foreground">No signup. Uses your public website only.</p>
+        <CustomJudgments judgments={judgments} setJudgments={setJudgments} update={update} />
+        <footer className="mt-16 flex flex-col gap-2 border-t pt-5 text-xs text-muted-foreground md:flex-row md:justify-between">
+          <span>Fetched with ReplyNodes · Jev via Vercel AI Gateway</span>
+          <span>Unofficial community project, not affiliated with TypeSafe AI.</span>
+        </footer>
+      </section>
+    </main>
+  );
 }
 
-function CustomJudgments({ judgments, setJudgments, update }: { judgments: Judgment[]; setJudgments: (items: Judgment[]) => void; update: (index: number, patch: Partial<Judgment>) => void }) { return <div className="mt-5 rounded-xl border border-dashed p-4"><div className="flex items-center justify-between gap-3"><div><p className="text-sm font-medium">Optional custom judgments</p><p className="mt-1 text-xs text-muted-foreground">Add up to three Boolean, Choice, or Score questions.</p></div><Button type="button" size="sm" variant="outline" onClick={() => judgments.length < 3 && setJudgments([...judgments, { name: `custom_${judgments.length + 1}`, type: "boolean", instructions: "", criteria: "" }])} disabled={judgments.length >= 3}><Plus /> Add</Button></div>{judgments.map((judgment, index) => <div key={index} className="mt-4 grid gap-2 rounded-lg bg-muted/50 p-3 md:grid-cols-[1fr_120px_2fr_2fr_auto]"><Input aria-label="Judgment name" value={judgment.name} onChange={(event) => update(index, { name: event.target.value })} placeholder="name" /><select aria-label="Judgment type" className="h-9 rounded-md border bg-background px-2 text-sm" value={judgment.type} onChange={(event) => update(index, { type: event.target.value as Judgment["type"] })}><option value="boolean">Boolean</option><option value="choice">Choice</option><option value="score">Score</option></select><Input aria-label="Judgment instructions" value={judgment.instructions} onChange={(event) => update(index, { instructions: event.target.value })} placeholder="What should Jev judge?" /><Input aria-label="Judgment criteria" value={judgment.criteria} onChange={(event) => update(index, { criteria: event.target.value })} placeholder={judgment.type === "choice" ? "key: description, one per line" : judgment.type === "score" ? "one level per line" : "criteria optional"} /><Button type="button" variant="ghost" size="icon" aria-label="Remove judgment" onClick={() => setJudgments(judgments.filter((_, i) => i !== index))}><Trash2 /></Button></div>)}</div>; }
-
-function Trace({ trace }: { trace: TraceState }) { const [expanded, setExpanded] = useState(trace.status !== "complete"); useEffect(() => { if (trace.status === "complete") setExpanded(false); }, [trace.status]); return <section className="mt-8" aria-live="polite" aria-label="Analysis progress"><div className="mb-3 flex items-center justify-between"><h2 className="text-sm font-medium">Execution trace</h2>{trace.status === "complete" && <button type="button" className="min-h-11 px-2 text-xs underline underline-offset-4" onClick={() => setExpanded(!expanded)}>{expanded ? "Collapse" : "Expand"}</button>}</div>{expanded ? <div className="rounded-xl border bg-card p-4">{stages.map(({ key, title }) => { const status = stageStatus(key, trace); return <div key={key} className="flex gap-3 py-2"><div className={`mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full ${status === "complete" ? "bg-emerald-500/15 text-emerald-600" : status === "failed" ? "bg-destructive/15 text-destructive" : status === "running" ? "bg-foreground/10 text-foreground motion-safe:animate-pulse" : "bg-muted text-muted-foreground"}`}>{status === "complete" ? <Check className="size-3" /> : status === "failed" ? <X className="size-3" /> : status === "running" ? <LoaderCircle className="size-3 motion-safe:animate-spin" /> : <Circle className="size-2 fill-current" />}</div><div className="min-w-0 flex-1"><p className="text-sm">{title}</p>{key === "fetch" && trace.metrics.scrapeMs !== undefined && <p className="font-mono text-xs text-muted-foreground">{trace.metrics.scrapeMs} ms · HTTP {trace.metrics.status ?? "unknown"}</p>}{key === "context" && trace.metrics.characters !== undefined && <p className="font-mono text-xs text-muted-foreground">{trace.metrics.characters.toLocaleString()} characters prepared</p>}{key === "jev" && trace.metrics.jevMs !== undefined && <p className="font-mono text-xs text-muted-foreground">{trace.metrics.jevMs} ms{trace.metrics.inputTokens !== undefined ? ` · ${trace.metrics.inputTokens.toLocaleString()} input tokens` : ""}{trace.metrics.outputTokens !== undefined ? ` · ${trace.metrics.outputTokens.toLocaleString()} output tokens` : ""}</p>}{key === "result" && trace.result && <p className="font-mono text-xs text-muted-foreground">{trace.result.timeline.totalMs} ms total</p>}</div></div>})}</div> : trace.result && <div className="rounded-xl border p-3 font-mono text-xs text-muted-foreground">Complete · {trace.result.timeline.totalMs} ms total</div>}</section>; }
-
-function Distribution({ answer }: { answer: Answer }) { return <details open className="mt-3"><summary className="min-h-11 cursor-pointer py-3 text-xs text-muted-foreground">View probability distribution</summary>{answer.probabilities ? <div className="space-y-2 pb-2">{Object.entries(answer.probabilities).map(([key, probability]) => <div key={key} className="flex items-center gap-2 text-xs"><span className="w-32 shrink-0 truncate text-muted-foreground">{readableAnswer(key)}</span><div className="h-1.5 min-w-0 flex-1 rounded-full bg-muted"><div className="h-full rounded-full bg-foreground" style={{ width: `${Math.round(probability * 100)}%` }} /></div><span className="w-10 text-right font-mono">{Math.round(probability * 100)}%</span></div>)}</div> : <p className="pb-2 text-xs text-muted-foreground">No probability distribution was returned.</p>}</details>; }
-
-function Results({ result, showMarkdown, setShowMarkdown, copyLink, copied }: { result: AnalysisResponse; showMarkdown: boolean; setShowMarkdown: (value: boolean) => void; copyLink: () => void; copied: boolean }) { const synthesis = founderSynthesis(result.classifications); return <div className="mt-12 space-y-5 animate-fade-in"><div className="flex flex-col justify-between gap-3 md:flex-row md:items-end"><div className="min-w-0"><p className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">Analysis result</p><h2 className="mt-2 text-2xl font-light">What Jev thinks about your SaaS</h2><p className="mt-2 break-words text-sm text-muted-foreground">{result.url}</p>{synthesis && <p className="mt-4 max-w-3xl text-sm leading-6 text-muted-foreground">{synthesis}</p>}</div><Button variant="outline" size="sm" onClick={copyLink}><Copy />{copied ? "Copied" : "Copy result link"}</Button></div>{FOUNDER_SECTIONS.map((section) => <section key={section.key} aria-labelledby={`${section.key}-heading`} className="rounded-xl border bg-card p-4 md:p-5"><h3 id={`${section.key}-heading`} className="text-sm font-medium">{section.title}</h3><div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{answersForSection(result.classifications, section.answers).map((answer) => <FounderCard key={answer.name} answer={answer} />)}</div></section>)}{result.judgments.length > 0 && <section className="rounded-xl border border-dashed p-4 md:p-5"><h3 className="text-sm font-medium">Custom judgments</h3><div className="mt-3 grid gap-3 md:grid-cols-2">{result.judgments.map((answer) => <ClassificationCard key={answer.name} answer={answer} custom />)}</div></section>}<TechnicalDetails result={result} showMarkdown={showMarkdown} setShowMarkdown={setShowMarkdown} /><WhyBuild /></div>; }
-
-function FounderCard({ answer }: { answer: Answer }) { const raw = String(answer.value); const title = answer.name === "cta_signal" ? "CTA signal" : ({ understandable_in_10_seconds: "Understandable in 10 seconds", audience: "Target audience", value_proposition_clarity: "Value proposition", differentiation: "Differentiation", strongest_reason_to_choose: "Strongest reason to choose", self_serve_motion: "Self-serve vs sales-led", trust_strength: "Trust signals", copy_specificity: "Specific vs generic copy", change_first: "What Jev would change first" }[answer.name] ?? answer.name); const cta = answer.name === "cta_signal" ? splitCtaSignal(raw) : undefined; const display = answer.name === "understandable_in_10_seconds" ? ({ yes: "Likely yes", partly: "Unclear", no: "Likely no" }[raw] ?? readableAnswer(raw)) : cta ? "" : readableAnswer(raw); return <article className="rounded-xl border p-4"><div className="flex items-start justify-between gap-3"><h4 className="text-sm font-medium">{title}</h4>{answer.confidence !== undefined && <span className="whitespace-nowrap font-mono text-xs text-muted-foreground">{Math.round(answer.confidence * 100)}% confidence</span>}</div>{cta ? <div className="mt-3 space-y-1 text-lg font-light"><p>CTA: {cta.action}</p><p>CTA clarity: {cta.clarity}</p></div> : <p className={`mt-3 text-lg font-light ${answer.name === "change_first" ? "leading-7" : ""}`}>{answer.name === "change_first" ? `${String(display).replace(/\.$/, "")}.` : display}</p>}{answer.reason && <p className="mt-3 text-sm leading-6 text-muted-foreground">{answer.reason}</p>}{answer.name === "audience" && <Distribution answer={answer} />}{answer.name !== "change_first" && answer.name !== "audience" && <Distribution answer={answer} />}</article>; }
-
-function ClassificationCard({ answer, custom }: { answer: Answer; custom: boolean }) { return <article className="rounded-xl border p-4"><div className="flex items-start justify-between gap-3"><h4 className="text-sm font-medium">{custom ? customAnswerTitle(answer) : answer.name}</h4>{answer.confidence !== undefined && <span className="whitespace-nowrap font-mono text-xs text-muted-foreground">{Math.round(answer.confidence * 100)}% confidence</span>}</div><p className="mt-3 text-lg font-light">{displayAnswerValue(answer)}</p>{answer.reason && <p className="mt-3 text-sm leading-6 text-muted-foreground">{answer.reason}</p>}<Distribution answer={answer} /></article>; }
-
-function TechnicalDetails({ result, showMarkdown, setShowMarkdown }: { result: AnalysisResponse; showMarkdown: boolean; setShowMarkdown: (value: boolean) => void }) { const contextLabel = analysisContextLabel({ sentCharacters: result.usage.characters, sourceCharacters: result.scrape.sourceCharacters, contextTruncated: result.scrape.markdownTruncated }); return <details className="rounded-xl border p-4 md:p-5"><summary className="min-h-11 cursor-pointer py-3 text-sm font-medium">Technical details</summary><dl className="mt-3 grid gap-3 text-xs text-muted-foreground sm:grid-cols-2"><div><dt>Fetched with ReplyNodes</dt><dd className="font-mono text-foreground">{result.scrape.requestId.slice(0, 16)}</dd></div><div><dt>Requested model</dt><dd className="font-mono text-foreground">{result.model.requested}</dd></div><div>{result.model.resolved ? <><dt>Resolved version</dt><dd className="font-mono text-foreground">{result.model.resolved}</dd></> : <dt>Resolved version: not exposed by gateway</dt>}</div><div><dt>Characters sent to Jev</dt><dd className="font-mono text-foreground">{result.usage.characters.toLocaleString()}</dd></div><div><dt>Actual returned token usage</dt><dd className="font-mono text-foreground">{result.usage.inputTokens !== undefined || result.usage.outputTokens !== undefined ? `${result.usage.inputTokens ?? "—"} in · ${result.usage.outputTokens ?? "—"} out` : "not returned"}</dd></div><div><dt>Measured timings</dt><dd className="font-mono text-foreground">ReplyNodes {result.timeline.scrapeMs} ms · extract {result.timeline.extractMs} ms · Jev {result.timeline.jevMs} ms · total {result.timeline.totalMs} ms</dd></div></dl><button type="button" onClick={() => setShowMarkdown(!showMarkdown)} className="mt-4 flex min-h-11 w-full items-center justify-between rounded-lg border p-3 text-left text-sm"><span>{contextLabel}{result.scrape.markdownTruncated ? " · context truncated" : ""}</span><ChevronDown className={`size-4 transition-transform ${showMarkdown ? "rotate-180" : ""}`} /></button>{showMarkdown && <pre className="mt-3 max-h-96 overflow-auto rounded-lg bg-muted p-4 text-xs leading-6 whitespace-pre-wrap">{result.scrape.markdownPreview}</pre>}</details>; }
-
-function WhyBuild() { return <section className="rounded-xl border border-dashed bg-card p-4 md:p-5"><h3 className="text-sm font-medium">Why did we build this?</h3><p className="mt-3 text-sm leading-6 text-muted-foreground">Founders struggle to see their site like first-time visitors. ReplyNodes retrieves and converts live website content to clean context, and Jev makes structured probabilistic judgments. This is not an SEO score, objective company or product rating, AI detector, replacement for customer research, or definitive SaaS score.</p><p className="mt-4 overflow-x-auto whitespace-nowrap rounded-lg bg-muted px-3 py-3 font-mono text-xs">Your website → ReplyNodes (live web → clean context) → Jev (structured judgments) → Founder teardown</p><div className="mt-4 flex flex-wrap gap-4 text-sm"><a className="underline underline-offset-4" href="https://replynodes.com/" target="_blank" rel="noreferrer">Build with ReplyNodes</a><a className="underline underline-offset-4" href="https://github.com/replynodes/jev-web-analyzer" target="_blank" rel="noreferrer">View source on GitHub</a><span className="text-xs text-muted-foreground">Unofficial community project, not affiliated with TypeSafe AI.</span></div></section>; }
+function CustomJudgments({ judgments, setJudgments, update }: { judgments: Judgment[]; setJudgments: (items: Judgment[]) => void; update: (index: number, patch: Partial<Judgment>) => void }) {
+  return (
+    <div className="mt-5 rounded-xl border border-dashed p-4">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <p className="text-sm font-medium">Optional custom judgments</p>
+          <p className="mt-1 text-xs text-muted-foreground">Add up to three Boolean, Choice, or Score questions.</p>
+        </div>
+        <Button type="button" size="sm" variant="outline" onClick={() => judgments.length < MAX_JUDGMENTS && setJudgments([...judgments, { name: `custom_${judgments.length + 1}`, type: "boolean", instructions: "", criteria: "" }])} disabled={judgments.length >= MAX_JUDGMENTS}>
+          <Plus /> Add
+        </Button>
+      </div>
+      {judgments.map((judgment, index) => (
+        <div key={index} className="mt-4 grid gap-2 rounded-lg bg-muted/50 p-3 md:grid-cols-[1fr_120px_2fr_2fr_auto]">
+          <Input aria-label="Judgment name" value={judgment.name} onChange={(event) => update(index, { name: event.target.value })} placeholder="name" />
+          <select aria-label="Judgment type" className="h-9 rounded-md border bg-background px-2 text-sm" value={judgment.type} onChange={(event) => update(index, { type: event.target.value as Judgment["type"] })}>
+            <option value="boolean">Boolean</option>
+            <option value="choice">Choice</option>
+            <option value="score">Score</option>
+          </select>
+          <Input aria-label="Judgment instructions" value={judgment.instructions} onChange={(event) => update(index, { instructions: event.target.value })} placeholder="What should Jev judge?" />
+          <Input aria-label="Judgment criteria" value={judgment.criteria} onChange={(event) => update(index, { criteria: event.target.value })} placeholder={judgment.type === "choice" ? "key: description, one per line" : judgment.type === "score" ? "one level per line" : "criteria optional"} />
+          <Button type="button" variant="ghost" size="icon" aria-label="Remove judgment" onClick={() => setJudgments(judgments.filter((_, i) => i !== index))}>
+            <Trash2 />
+          </Button>
+        </div>
+      ))}
+    </div>
+  );
+}

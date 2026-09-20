@@ -11,3 +11,11 @@ export function safeInitialUrl(value: string | null) {
     return url.protocol === "http:" || url.protocol === "https:" ? url.toString() : "";
   } catch { return ""; }
 }
+
+export function resultPath(url: string) {
+  return `/result?url=${encodeURIComponent(url)}`;
+}
+
+export function inputPath(url?: string) {
+  return url ? `/?url=${encodeURIComponent(url)}` : "/";
+}
