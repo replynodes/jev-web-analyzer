@@ -1,10 +1,11 @@
 import { ThemeToggle } from "@/components/theme-toggle";
+import { trackReplynodesCtaClicked } from "@/lib/analytics";
 
 export function SiteHeader({ crumb }: { crumb: string }) {
   return (
     <header className="mx-auto flex max-w-5xl items-center justify-between">
       <div className="flex min-w-0 items-center gap-2">
-        <a href="https://replynodes.com/" target="_blank" rel="noreferrer" aria-label="ReplyNodes home" className="flex shrink-0 items-center gap-1.5">
+        <a href="https://replynodes.com/" target="_blank" rel="noreferrer" aria-label="ReplyNodes home" onClick={() => trackReplynodesCtaClicked("header")} className="flex shrink-0 items-center gap-1.5">
           <svg width="20" height="20" viewBox="0 0 40 40" fill="none" aria-hidden="true">
             <rect width="40" height="40" rx="10" fill="#A2D98A" />
             <line x1="20" y1="20" x2="11" y2="11" stroke="#223835" strokeWidth="1.6" strokeLinecap="round" />

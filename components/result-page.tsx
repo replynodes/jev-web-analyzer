@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { ResultScorecard } from "@/components/result-scorecard";
 import { SiteHeader } from "@/components/site-header";
 import { Trace } from "@/components/trace-panel";
+import { trackAnalysisCompleted, trackAnalysisStarted, trackDomainVisit, trackResultShared } from "@/lib/analytics";
+import type { AnalysisResponse } from "@/lib/contracts";
 import { founderSynthesis } from "@/lib/founder-summary";
 import { useAnalysis } from "@/lib/hooks/use-analysis";
 import { inputPath, safeInitialUrl, withAnalyzedUrl } from "@/lib/query-url";
@@ -19,6 +21,7 @@ export function ResultPage() {
   const [copied, setCopied] = useState(false);
   const { result, error, loading, trace, run, abort } = useAnalysis();
   const startedForRef = useRef<string | undefined>(undefined);
+  const completedForRef = useRef<AnalysisResponse | undefined>(undefined);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -31,15 +34,24 @@ export function ResultPage() {
     if (status !== "ready" || !requestedUrl || startedForRef.current === requestedUrl) return;
     startedForRef.current = requestedUrl;
     const judgments = readSessionJudgments(requestedUrl);
+    trackAnalysisStarted(requestedUrl, judgments.length);
+    trackDomainVisit(requestedUrl);
     void run(requestedUrl, judgments).then((completed) => {
       if (completed?.url) window.history.replaceState(null, "", withAnalyzedUrl(window.location.href, completed.url));
     });
     return () => abort();
   }, [status, requestedUrl, run, abort]);
 
+  useEffect(() => {
+    if (!result || completedForRef.current === result) return;
+    completedForRef.current = result;
+    trackAnalysisCompleted(result);
+  }, [result]);
+
   async function copyLink() {
     await navigator.clipboard?.writeText(withAnalyzedUrl(window.location.href, result?.url ?? requestedUrl));
     setCopied(true);
+    trackResultShared(result?.url ?? requestedUrl);
     window.setTimeout(() => setCopied(false), 1500);
   }
 
