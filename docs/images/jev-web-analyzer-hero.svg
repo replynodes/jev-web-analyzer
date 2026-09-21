@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900" role="img" aria-labelledby="title desc">
+  <title id="title">Jev Web Analyzer</title>
+  <desc id="desc">ReplyNodes Jev Web Analyzer interface for analyzing a SaaS website.</desc>
+  <rect width="1440" height="900" fill="#fcfcfc"/>
+  <g font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" fill="#111">
+    <!-- Header -->
+    <rect x="44" y="24" width="30" height="30" rx="7" fill="#A2D98A"/>
+    <line x1="59" y1="39" x2="51" y2="31" stroke="#223835" stroke-width="1.6" stroke-linecap="round"/>
+    <line x1="59" y1="39" x2="67" y2="31" stroke="#223835" stroke-width="1.6" stroke-linecap="round"/>
+    <line x1="59" y1="39" x2="51" y2="47" stroke="#223835" stroke-width="1.6" stroke-linecap="round"/>
+    <line x1="59" y1="39" x2="67" y2="47" stroke="#223835" stroke-width="1.6" stroke-linecap="round"/>
+    <circle cx="51" cy="31" r="2.6" fill="#223835"/><circle cx="67" cy="31" r="2.6" fill="#223835"/>
+    <circle cx="51" cy="47" r="2.6" fill="#223835"/><circle cx="67" cy="47" r="2.6" fill="#223835"/>
+    <circle cx="59" cy="39" r="5" fill="#223835"/><circle cx="59" cy="39" r="2.6" fill="#A2D98A"/>
+    <text x="82" y="46" font-size="20" font-weight="700">ReplyNodes</text>
+    <text x="193" y="46" font-size="20" fill="#777">/</text>
+    <text x="213" y="46" font-size="19" fill="#666">jev web analyzer</text>
+    <rect x="1350" y="18" width="44" height="44" rx="12" fill="#fff" stroke="#ddd"/>
+    <path d="M1375 31a9 9 0 1 0 7 13 10 10 0 0 1-7-13z" fill="none" stroke="#111" stroke-width="2"/>
+
+    <!-- Hero -->
+    <text x="46" y="174" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="15" letter-spacing="5" fill="#666">WHAT DOES JEV THINK ABOUT YOUR SAAS?</text>
+    <text x="46" y="272" font-size="68" font-weight="400" letter-spacing="-2.5">Paste your SaaS website. See</text>
+    <text x="46" y="346" font-size="68" font-weight="400" letter-spacing="-2.5">what Jev thinks your customers</text>
+    <text x="46" y="420" font-size="68" font-weight="400" letter-spacing="-2.5">see.</text>
+
+    <text x="46" y="486" font-size="20" fill="#5c5c5c">ReplyNodes reads your live website and Jev evaluates how clearly your product</text>
+    <text x="46" y="521" font-size="20" fill="#5c5c5c">communicates its audience, value, differentiation, trust, and conversion intent.</text>
+
+    <!-- URL input -->
+    <rect x="46" y="580" width="1348" height="100" rx="20" fill="#fff" stroke="#d8d8d8" stroke-width="2"/>
+    <text x="84" y="640" font-size="20" fill="#5c5c5c">https://yourproduct.com</text>
+    <rect x="1215" y="599" width="155" height="62" rx="18" fill="#8b8b8b"/>
+    <text x="1248" y="638" font-size="18" fill="#fff">Analyze →</text>
+
+    <!-- Examples -->
+    <text x="46" y="733" font-size="16" fill="#666">Try:</text>
+    <g font-size="16" fill="#555">
+      <rect x="84" y="704" width="114" height="52" rx="26" fill="#fff" stroke="#ddd"/><text x="102" y="736">stripe.com</text>
+      <rect x="210" y="704" width="112" height="52" rx="26" fill="#fff" stroke="#ddd"/><text x="228" y="736">linear.app</text>
+      <rect x="334" y="704" width="118" height="52" rx="26" fill="#fff" stroke="#ddd"/><text x="352" y="736">vercel.com</text>
+      <rect x="464" y="704" width="106" height="52" rx="26" fill="#fff" stroke="#ddd"/><text x="482" y="736">notion.so</text>
+      <rect x="582" y="704" width="118" height="52" rx="26" fill="#fff" stroke="#ddd"/><text x="600" y="736">github.com</text>
+    </g>
+    <text x="46" y="792" font-size="16" fill="#666">No signup. Uses your public website only.</text>
+
+    <!-- Optional judgments -->
+    <rect x="46" y="824" width="1348" height="62" rx="18" fill="none" stroke="#ddd" stroke-dasharray="4 4"/>
+    <text x="68" y="850" font-size="17" font-weight="600">Optional custom judgments</text>
+    <text x="68" y="873" font-size="14" fill="#666">Add up to three Boolean, Choice, or Score questions.</text>
+    <rect x="1286" y="838" width="86" height="38" rx="12" fill="#fff" stroke="#ddd"/>
+    <text x="1304" y="863" font-size="17">＋ Add</text>
+  </g>
+</svg>
