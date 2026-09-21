@@ -8,6 +8,10 @@ Paste a URL. **ReplyNodes** fetches the page and turns it into clean Markdown. *
 
 **[Try the live demo →](https://replynodes.com/jev-web-analyzer/)**
 
+<a href="https://replynodes.com/jev-web-analyzer/">
+  <img src="./docs/images/jev-web-analyzer-hero.svg" alt="Jev Web Analyzer — paste a SaaS website and see what Jev thinks" width="100%">
+</a>
+
 <table>
   <tr>
     <td align="center" width="220">
