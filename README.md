@@ -12,23 +12,6 @@ Paste a URL. **ReplyNodes** fetches the page and turns it into clean Markdown. *
   <img src="./docs/images/jev-web-analyzer-hero.svg" alt="Jev Web Analyzer — paste a SaaS website and see what Jev thinks" width="100%">
 </a>
 
-<table>
-  <tr>
-    <td align="center" width="220">
-      <a href="https://replynodes.com/"><img src="./public/brand/replynodes.svg" alt="ReplyNodes" height="34"></a><br>
-      <sub>Live web context</sub>
-    </td>
-    <td align="center" width="220">
-      <a href="https://typesafe.ai/"><img src="./public/brand/typesafe-jev.svg" alt="Jev by TypeSafe AI" height="34"></a><br>
-      <sub>Typed probabilistic judgments</sub>
-    </td>
-    <td align="center" width="220">
-      <a href="https://vercel.com/ai-gateway"><img src="./public/brand/vercel.svg" alt="Vercel" height="28"></a><br>
-      <sub>AI Gateway</sub>
-    </td>
-  </tr>
-</table>
-
 > **Unofficial community project, not affiliated with TypeSafe AI.**
 
 ## What this demo teaches
@@ -284,6 +267,25 @@ You can keep that pipeline when cloning the project, or replace the input state 
 Apache-2.0. See [LICENSE](./LICENSE).
 
 The UI was originally bootstrapped from the Vercel Labs AI SDK Gateway Demo; its original license and attribution remain in the repository.
+
+## Built with
+
+<table>
+  <tr>
+    <td align="center" width="220">
+      <a href="https://replynodes.com/"><img src="./public/brand/replynodes.svg" alt="ReplyNodes" height="34"></a><br>
+      <sub>Live web context</sub>
+    </td>
+    <td align="center" width="220">
+      <a href="https://typesafe.ai/"><img src="./public/brand/typesafe-jev.svg" alt="Jev by TypeSafe AI" height="34"></a><br>
+      <sub>Typed probabilistic judgments</sub>
+    </td>
+    <td align="center" width="220">
+      <a href="https://vercel.com/ai-gateway"><img src="./public/brand/vercel.svg" alt="Vercel" height="28"></a><br>
+      <sub>AI Gateway</sub>
+    </td>
+  </tr>
+</table>
 
 ---
 
