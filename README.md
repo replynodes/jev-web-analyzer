@@ -1,14 +1,12 @@
-# What Does Jev Think About Your SaaS?
+# Jev Web Analyzer
 
-See what a first-time visitor is likely to understand from your SaaS website.
+**Learn Jev with real web data.**
 
-A focused outside-in, probabilistic teardown: enter a public SaaS URL, let ReplyNodes fetch clean Markdown, then send that state to Jev through the Vercel AI Gateway for ten structured founder judgments about what the site communicates to a first-time visitor. It is a developer demo, not a ReplyNodes marketing site, SEO score, objective company or product rating, AI detector, customer-research replacement, or definitive SaaS score.
+Jev Web Analyzer is a small, inspectable example of using **Jev** to make typed probabilistic judgments over live website content.
 
-The public requested model alias is exactly `jev-latest`. Vercel AI Gateway's canonical evaluation model ID is `typesafe-ai/jev`, which routes the Jev latest model; this project does not claim an exact underlying version.
+Paste a URL. **ReplyNodes** fetches the page and turns it into clean Markdown. **Jev**, through **Vercel AI Gateway**, evaluates that state with structured questions and returns decisions with probabilities.
 
 **[Try the live demo →](https://replynodes.com/jev-web-analyzer/)**
-
-### Built with
 
 <table>
   <tr>
@@ -18,209 +16,166 @@ The public requested model alias is exactly `jev-latest`. Vercel AI Gateway's ca
     </td>
     <td align="center" width="220">
       <a href="https://typesafe.ai/"><img src="./public/brand/typesafe-jev.svg" alt="Jev by TypeSafe AI" height="34"></a><br>
-      <sub>Jev by TypeSafe AI · probabilistic judgments</sub>
+      <sub>Typed probabilistic judgments</sub>
     </td>
     <td align="center" width="220">
       <a href="https://vercel.com/ai-gateway"><img src="./public/brand/vercel.svg" alt="Vercel" height="28"></a><br>
-      <sub>Vercel AI Gateway · model routing</sub>
+      <sub>AI Gateway</sub>
     </td>
   </tr>
 </table>
 
-**Web context by ReplyNodes · Judgments by Jev · Routed through Vercel AI Gateway**
-
-## Architecture
-
-The browser sends only a URL and at most three bounded custom judgment definitions to `POST /jev-web-analyzer/api/analyze`. The Next.js server validates the URL, resolves DNS, calls `GET https://api.replynodes.com/v1/webcontext/scrape?url=...` with `Authorization: Bearer ${REPLYNODES_API_KEY}`, and expects the successful `{ data, meta }` envelope with `meta.request_id`. The clean Markdown in `data` becomes Jev state. Jev receives exactly ten bounded founder questions—clarity, audience, value proposition, differentiation, reason to choose, CTA signal, trust, self-serve motion, copy specificity, and change-first—plus optional Boolean, Choice, or Score questions, in one evaluation through Vercel AI Gateway using canonical model ID `typesafe-ai/jev` and `AI_GATEWAY_API_KEY`. The default response is a stable, sanitized JSON contract. With `Accept: application/x-ndjson`, the same operation emits flushed typed events in awaited order; failures emit a sanitized `error` event, and cache hits emit a compact trace using the recorded result without pretending to fetch again.
-
-The server measures ReplyNodes scrape, extraction, Jev, and total latency. Successful responses use a bounded five-minute in-memory cache keyed by a SHA-256 digest of the normalized URL and judgment definitions. There is no database, auth system, queue, Redis, worker service, persistent user data, or provider mock.
-
-Streaming responses use `application/x-ndjson; charset=utf-8`, `Cache-Control: no-cache`, and `X-Accel-Buffering: no`. If nginx fronts the service, disable proxy buffering for the analysis location so real stage events can arrive progressively. The UI displays only measured timings, returned token usage, returned probabilities, and explicit provider metadata.
-
-## Security decisions
-
-- Credentials are server-only environment variables and are never included in client code, HTML, logs, or responses.
-- URLs are HTTP(S)-only and reject credentials, fragments, localhost, private/link-local/reserved IPv4 and IPv6, and DNS names resolving to blocked addresses. The request is bounded by timeout, response-size, and redirect limits; ReplyNodes remains the fetch boundary for the target page.
-- Request JSON, URL length, question count, names, instructions, labels, options, and rubric sizes are bounded with Zod. Website text is untrusted state, not application instructions.
-- A bounded in-memory per-IP token bucket provides basic abuse protection for a single-instance demo. The cache contains only sanitized successful responses and expires automatically.
-- A resolved model/version is displayed only when explicit, allowlisted provider metadata supplies a sanitized value. The app never treats the SDK response model ID or the `jev-latest` alias as a resolved version.
-
 > **Unofficial community project, not affiliated with TypeSafe AI.**
 
----
+## What this demo teaches
 
-## What Jev decides
+The SaaS website teardown is only an example workload. The main purpose of this repo is to make Jev's evaluation pattern easy to see, run, modify, and reuse.
 
-Jev evaluates your SaaS website from the perspective of a first-time visitor and answers 10 founder-focused questions:
+| Jev capability | How this project demonstrates it |
+| --- | --- |
+| **Choice judgments** | Infer audience, clarity, differentiation, CTA, trust, and product motion |
+| **Boolean judgments** | Add your own yes/no evaluation |
+| **Score judgments** | Add your own ordered rubric |
+| **Probabilities** | Inspect the distribution behind a decision |
+| **Multiple judgments** | Evaluate the same state against many questions in one call |
+| **Custom questions** | Add Boolean, Choice, or Score judgments from the UI |
+| **Real-world state** | Evaluate live Markdown instead of a synthetic prompt |
 
-1. **Can someone understand what the product does within 10 seconds?**
-2. **Who does the product appear to be for?**
-3. **Is the value proposition clear and specific?**
-4. **Does the product feel differentiated from similar SaaS products?**
-5. **What appears to be the strongest reason to choose this product?**
-6. **Is there a clear next action for the visitor?**
-7. **Does the website communicate enough trust to try or buy?**
-8. **Does the product appear self-serve or sales-led?**
-9. **Does the copy feel specific or generic/templated?**
-10. **What should the founder change first?**
-
-The result is not an overall SaaS score. It is a set of structured, probabilistic judgments about what the public website appears to communicate.
-
----
+The useful output is not a long generated review. It is a set of **explicit decisions over shared state**, with probabilities that software can inspect.
 
 ## How it works
 
-Paste any public SaaS URL.
-
 ```text
-Your website
-     ↓
+Public URL
+   ↓
 ReplyNodes
-fetches the live page and extracts clean Markdown
-     ↓
+fetch + extract clean Markdown
+   ↓
 Jev via Vercel AI Gateway
-runs structured probabilistic judgments
-     ↓
-Founder teardown
+typed questions over the same state
+   ↓
+structured decisions + probabilities
 ```
 
-The UI exposes the execution as it happens:
+The UI also exposes the real execution pipeline:
 
 ```text
-✓ Fetch website with ReplyNodes            0.82s
-✓ Extract clean Markdown                   18,421 chars
+✓ Fetch website with ReplyNodes
+✓ Extract clean Markdown
 ✓ Prepare context for Jev
-✓ Run 10 founder judgments                 0.91s
-✓ Build teardown
-
-Total                                      1.76s
+✓ Run Jev judgments
+✓ Build result
 ```
 
-Timings shown in the app are measured from real execution. The demo does not simulate progress or invent model metadata.
+Timings are measured from real execution. The app does not simulate progress or invent model metadata.
 
----
+## The Jev pattern
 
-## Example output
+The core of the project is intentionally small. The server uses the AI SDK evaluation API like this:
 
-A teardown is designed to be understandable in seconds:
+```ts
+import { experimental_evaluate as evaluate } from "ai";
 
-```text
-What Jev thinks about example.com
+const result = await evaluate({
+  model: "typesafe-ai/jev",
+  state: markdown,
+  questions: {
+    value_proposition: {
+      type: "choice",
+      instructions: "Is the value proposition clear and specific?",
+      criteria: {
+        clear: "The value proposition is clear and specific",
+        partly_clear: "Some important parts are unclear",
+        unclear: "The value proposition is unclear",
+      },
+    },
+  },
+});
 
-Understood in 10 sec
-Likely yes · 89%
-
-Audience
-Developer teams · 94%
-
-Value proposition
-Clear · 86%
-
-Differentiation
-Moderate
-
-Primary CTA
-Get API Key · Clear
-
-Trust signals
-Strong
-
-Messaging
-Mostly specific
-
-What Jev would change first
-Explain the customer outcome before describing the infrastructure.
+console.log(result.answers);
 ```
 
-Detailed probabilities and extracted source context remain available for technical inspection without dominating the default view.
+In this repo, the same call evaluates ten default founder questions plus any custom questions added by the user.
 
----
+See:
 
-## Why we built this
+- [`app/api/analyze/route.ts`](./app/api/analyze/route.ts) — Jev evaluation and streaming pipeline
+- [`lib/founder-questions.ts`](./lib/founder-questions.ts) — example typed questions
+- [`lib/contracts.ts`](./lib/contracts.ts) — request and response contracts
+- [`components/analyzer.tsx`](./components/analyzer.tsx) — interactive demo UI
 
-Founders spend a lot of time looking at their own websites, which makes it difficult to see them the way a first-time visitor does.
+## Example workload: SaaS website teardown
 
-This experiment provides an outside-in view.
+The included demo asks Jev what a first-time visitor is likely to understand from a SaaS website.
 
-**ReplyNodes** retrieves the live website and converts it into clean context. **Jev** then makes structured probabilistic judgments about what that website appears to communicate.
+Examples:
 
-The goal is not to create another SEO score or arbitrary website grade. It is to answer questions founders actually care about:
-
-- Do people understand the product quickly?
-- Who does the website appear to target?
+- Can someone understand the product within 10 seconds?
+- Who does the page appear to target?
 - Is the value proposition clear?
 - Does the product feel differentiated?
-- Is there enough trust to take the next step?
-- Is the path to conversion obvious?
-- What is the highest-impact thing to improve first?
+- Is the primary CTA clear?
+- What trust signals are communicated?
+- Does the motion appear self-serve or sales-led?
+- Does the copy feel specific or generic?
+- What should the founder change first?
 
-These are probabilistic interpretations of public website content, not objective ratings of the company or product.
+These questions are deliberately easy to replace. The project is meant to show the pattern, not prescribe the use case.
 
----
+## Try your own judgments
 
-## Live execution pipeline
+The UI supports up to three custom judgments.
 
-The browser submits a URL to the Next.js server. The server keeps all provider credentials private and orchestrates the analysis.
+### Boolean
 
 ```text
-Browser
-  ↓
-POST /jev-web-analyzer/api/analyze
-  ↓
-ReplyNodes Web Scrape API
-  ↓
-clean Markdown
-  ↓
-Vercel AI Gateway
-  ↓
-Jev
-  ↓
-structured founder judgments
+Is this page written for technical users?
+→ yes / no + probabilities
 ```
 
-The public requested Jev alias is `jev-latest`. The application only displays a resolved model version when explicit provider metadata exposes one. It never guesses or hardcodes the underlying version.
+### Choice
 
----
+```text
+What kind of page is this?
+→ docs / landing page / blog / pricing + probabilities
+```
 
-## What ReplyNodes does
+### Score
 
-ReplyNodes is responsible for the live web context:
+```text
+How technically detailed is this page?
+→ ordered rubric + score distribution
+```
 
-- fetch the public website
-- extract the primary page content
-- convert it to clean Markdown
-- return request metadata for traceability
+This is the part to modify if you want to experiment with Jev for classification, filtering, routing, evaluation, moderation, ranking signals, or other structured decision tasks.
 
-The target page itself is treated as untrusted input.
+## Run it locally
 
-## What Jev does
+### 1. Clone
 
-Jev is responsible for the structured probabilistic judgments over that context.
+```bash
+git clone https://github.com/replynodes/jev-web-analyzer.git
+cd jev-web-analyzer
+pnpm install
+```
 
-The demo uses Jev through **Vercel AI Gateway** and preserves the returned probabilities/confidence where available.
+### 2. Configure credentials
 
----
-
-## Run locally
-
-### Requirements
-
-- Node.js
-- pnpm
-- a ReplyNodes API key
-- Vercel AI Gateway credentials
-
-Set:
+Create `.env.local`:
 
 ```bash
 REPLYNODES_API_KEY=...
 AI_GATEWAY_API_KEY=...
 ```
 
-Then:
+- ReplyNodes provides the live web context.
+- Vercel AI Gateway provides access to Jev.
+
+The app has no mock provider path, so real analysis requires both credentials.
+
+### 3. Start
 
 ```bash
-pnpm install
 pnpm dev
 ```
 
@@ -230,133 +185,102 @@ Open:
 http://localhost:3000/jev-web-analyzer/
 ```
 
-There is no mocked provider path. A real analysis requires both credentials.
-
-### Quality gates
+### 4. Run the checks
 
 ```bash
 pnpm test
 pnpm type-check
 pnpm lint
 pnpm build
-git diff --check
 ```
 
----
+## Make it your own
 
-## API behavior
+The easiest ways to experiment are:
 
-The frontend calls:
+1. Edit [`lib/founder-questions.ts`](./lib/founder-questions.ts) and replace the default judgments.
+2. Keep ReplyNodes as the state source, or replace the state with your own text/data.
+3. Change how the UI presents probabilities and decisions.
+4. Add a new example workload that demonstrates a useful Jev capability.
+
+A useful contribution does not need to make the project bigger. Small examples that make a Jev behavior easier to understand are especially welcome.
+
+## Contributing
+
+Contributions are welcome.
+
+Good contribution ideas include:
+
+- new Jev judgment examples
+- better Boolean / Choice / Score demos
+- clearer probability visualizations
+- examples using different kinds of web pages
+- improvements to execution tracing
+- tests and edge-case handling
+- documentation that makes Jev easier to learn
+- accessibility and UI improvements
+
+Suggested workflow:
+
+```bash
+# fork the repository first
+git clone https://github.com/<your-username>/jev-web-analyzer.git
+cd jev-web-analyzer
+
+git checkout -b my-improvement
+pnpm install
+
+# make your changes
+pnpm test
+pnpm type-check
+pnpm lint
+pnpm build
+
+git push origin my-improvement
+# then open a pull request
+```
+
+Please keep pull requests focused and explain **what Jev capability the change helps demonstrate or understand**.
+
+If you are unsure where to start, open an issue or propose a small example before building a large feature.
+
+## Architecture
 
 ```text
-POST /jev-web-analyzer/api/analyze
+Browser
+  ↓
+Next.js /api/analyze
+  ├─ ReplyNodes Web Scrape API
+  │    ↓
+  │  clean Markdown
+  │
+  └─ Vercel AI Gateway
+       ↓
+      Jev
+       ↓
+structured answers
 ```
 
-The server:
+The server keeps credentials private, validates public URLs, treats webpage content as untrusted state, and supports NDJSON streaming so the UI can show real execution stages as they complete.
 
-1. validates the target URL
-2. calls the production ReplyNodes Web Scrape API
-3. extracts the returned clean Markdown
-4. prepares the Jev state
-5. sends the founder judgments through Vercel AI Gateway
-6. returns a sanitized result contract
-7. streams execution events when NDJSON is requested
+The requested Jev alias shown to users is `jev-latest`. The implementation routes through the Vercel AI Gateway model ID `typesafe-ai/jev`. A resolved model version is displayed only when provider metadata explicitly exposes one.
 
-Streaming responses use:
+## Why ReplyNodes is here
 
-```text
-application/x-ndjson; charset=utf-8
-```
+Jev needs state to evaluate.
 
-This lets the UI progressively mark each real execution stage as completed.
+For this demo, ReplyNodes turns a live public webpage into clean Markdown so Jev can focus on the decision layer:
 
----
+**ReplyNodes fetches the web. Jev judges what it means.**
 
-## Security
+You can keep that pipeline when cloning the project, or replace the input state with data from your own application.
 
-This is a public demo, so the server includes basic protections:
+## License
 
-- API credentials remain server-side
-- only HTTP(S) public URLs are accepted
-- localhost, credentials-in-URL, and blocked/private network targets are rejected
-- DNS results are checked against blocked address ranges
-- request size, redirect count, response size, and execution time are bounded
-- custom judgment inputs are schema-validated and bounded
-- page content is treated as untrusted data, not application instructions
-- successful results use a short-lived bounded in-memory cache
-- basic in-memory per-IP abuse protection is applied
-- provider/model metadata is allowlisted and sanitized before display
+Apache-2.0. See [LICENSE](./LICENSE).
 
-The current demo intentionally avoids a database, queue, Redis dependency, authentication system, or user credit system.
+The UI was originally bootstrapped from the Vercel Labs AI SDK Gateway Demo; its original license and attribution remain in the repository.
 
 ---
 
-## Deployment
-
-The production demo is available at:
-
-**https://replynodes.com/jev-web-analyzer/**
-
-The Next.js app runs as a standalone service behind the main ReplyNodes domain. When using nginx or another reverse proxy for the streaming endpoint, buffering should be disabled so execution events reach the browser progressively.
-
-Example requirement:
-
-```nginx
-proxy_buffering off;
-```
-
-Configure only the required server-side environment variables:
-
-```text
-REPLYNODES_API_KEY
-AI_GATEWAY_API_KEY
-```
-
-Never expose these values to the browser.
-
----
-
-## Positioning and non-goals
-
-Founders struggle to see their site like first-time visitors. ReplyNodes retrieves live web content and converts it to clean context; Jev makes structured probabilistic judgments from that context. The result is an outside-in founder teardown, not a definitive rating. It does not infer company trustworthiness, claim copy is AI-generated, or replace customer research. Native provider probability distributions and explicit provider confidence are preserved when returned; optional safe provider reasons are displayed only when returned.
-
-The Vercel Labs AI SDK Gateway Demo license and credit remain in [LICENSE](./LICENSE).
-
-A concise description for showcase listings:
-
-> Jev evaluates what a first-time visitor is likely to understand from a SaaS website: who the product is for, whether the value proposition is clear, how differentiated it feels, whether the site communicates enough trust to convert, how specific the messaging is, and what the founder should improve first.
-
----
-
-## Non-goals
-
-This project is intentionally not:
-
-- an SEO audit
-- an overall SaaS grading system
-- an AI-content detector
-- a replacement for customer research
-- a factual assessment of company quality or trustworthiness
-- a database or leaderboard of SaaS companies
-
-The current phase is focused on one experience:
-
-**Paste your SaaS → watch ReplyNodes + Jev analyze it → get a founder-relevant teardown worth sharing.**
-
----
-
-## Credits
-
-Built with:
-
-- [ReplyNodes](https://replynodes.com/) for live web context
-- Jev by TypeSafe AI for structured probabilistic judgments
-- Vercel AI Gateway
-- Vercel AI SDK
-- Next.js
-
-The UI was originally bootstrapped from the Vercel Labs AI SDK Gateway Demo. Its original license and attribution remain in [LICENSE](./LICENSE).
-
----
-
-**ReplyNodes fetches the web. Jev judges what it communicates.**
+**Built to explore Jev, not to hide it behind another black box.**
