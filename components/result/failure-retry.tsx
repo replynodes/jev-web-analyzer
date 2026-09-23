@@ -6,22 +6,23 @@ import type { TraceState } from "@/lib/analysis-trace";
 import { Button } from "@/components/ui/button";
 import { ProvenanceTag } from "./provenance-tag";
 
+import { classifyFailure } from "@/lib/failure";
+
 export function FailureRetry({
   error,
+  errorCode,
   trace,
   onRetry,
   editHref,
 }: {
   error: string;
+  errorCode?: string;
   trace: TraceState;
   onRetry: () => void;
   editHref: string;
 }) {
   const fetched = typeof trace.metrics.status === "number";
-  const title = fetched ? "Jev didn't return a result" : "Site unreachable";
-  const detail = fetched
-    ? "The homepage was fetched, but the classification step returned nothing. This is retryable."
-    : "The homepage could not be fetched. Check the URL and retry manually.";
+  const { title, detail } = classifyFailure(errorCode, fetched);
   const requestId = trace.result?.scrape.requestId;
 
   return (
@@ -35,8 +36,10 @@ export function FailureRetry({
         <h2 className="text-sm font-semibold">{title}</h2>
       </div>
       <p className="mt-2 text-sm text-muted-foreground">{detail}</p>
-      <p className="mt-1 text-sm text-destructive">{error || "The analysis could not be completed."}</p>
       <p className="mt-2 break-words font-mono text-xs text-muted-foreground">
+        Server message: {error || "The analysis could not be completed."}
+      </p>
+      <p className="mt-1 break-words font-mono text-xs text-muted-foreground">
         Request ID: {requestId ?? "Request ID not returned"}
       </p>
       <p className="mt-1 font-mono text-xs text-muted-foreground">
