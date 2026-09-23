@@ -86,12 +86,19 @@ export function FirstImpression({ result }: { result: AnalysisResponse }) {
 
       <div className="mt-3">
         {heading ? (
-          <>
-            <ProvenanceTag kind="homepage" />
-            <h1 className="mt-3 max-w-4xl text-3xl font-extrabold leading-[1.05] tracking-[-0.04em] md:text-5xl">
-              {heading}
-            </h1>
-          </>
+          <figure className="mt-3 max-w-3xl rounded-xl border-l-2 border-[#a9dcd2] bg-muted/40 px-4 py-3 dark:border-[#1f5a51]">
+            <figcaption className="flex flex-wrap items-center gap-2">
+              <ProvenanceTag kind="homepage" />
+              <span className="text-[11px] font-extrabold uppercase tracking-[0.1em] text-muted-foreground">
+                Quoted from your homepage
+              </span>
+            </figcaption>
+            <blockquote className="mt-2">
+              <h1 className="text-xl font-semibold leading-snug tracking-[-0.015em] text-foreground md:text-2xl">
+                {heading}
+              </h1>
+            </blockquote>
+          </figure>
         ) : (
           <p className="text-sm text-muted-foreground">No H1 returned for this homepage · quote omitted.</p>
         )}

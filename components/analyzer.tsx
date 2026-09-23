@@ -43,9 +43,9 @@ export function Analyzer() {
       <SiteHeader crumb="jev web analyzer" />
       <section className="mx-auto max-w-5xl pb-16 pt-16 md:pt-24">
         <div className="max-w-3xl">
-          <p className="mb-5 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">What Does Jev Think About Your SaaS?</p>
-          <h1 className="text-4xl font-light tracking-tight md:text-6xl">Paste your SaaS website. See what Jev thinks your customers see.</h1>
-          <p className="mt-5 max-w-2xl text-base leading-7 text-muted-foreground">ReplyNodes reads your live website and Jev evaluates how clearly your product communicates its audience, value, differentiation, trust, and conversion intent.</p>
+          <p className="mb-5 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">Jev Web Analyzer</p>
+          <h1 className="text-4xl font-light tracking-tight md:text-6xl">Paste your homepage. See what Jev reads.</h1>
+          <p className="mt-5 max-w-2xl text-base leading-7 text-muted-foreground">ReplyNodes turns the page into clean Markdown. Jev judges what it communicates to a first-time visitor.</p>
         </div>
         <div className="mt-10 rounded-2xl border bg-card p-3 shadow-border-medium md:p-4">
           <form onSubmit={(event) => { event.preventDefault(); submit(); }} className="flex flex-col gap-3 md:flex-row">
