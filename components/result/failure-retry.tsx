@@ -36,8 +36,10 @@ export function FailureRetry({
         <h2 className="text-sm font-semibold">{title}</h2>
       </div>
       <p className="mt-2 text-sm text-muted-foreground">{detail}</p>
-      <p className="mt-1 text-sm text-destructive">{error || "The analysis could not be completed."}</p>
       <p className="mt-2 break-words font-mono text-xs text-muted-foreground">
+        Server message: {error || "The analysis could not be completed."}
+      </p>
+      <p className="mt-1 break-words font-mono text-xs text-muted-foreground">
         Request ID: {requestId ?? "Request ID not returned"}
       </p>
       <p className="mt-1 font-mono text-xs text-muted-foreground">

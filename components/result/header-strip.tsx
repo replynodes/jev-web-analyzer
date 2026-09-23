@@ -28,21 +28,23 @@ export function ResultHeaderStrip({
       <div className="min-w-0">
         <p className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">Analysis result</p>
         {pending ? (
-          <div className="mt-2 space-y-2" aria-hidden="true">
-            <div className="h-5 w-40 animate-pulse rounded bg-muted" />
-            <div className="h-4 w-56 animate-pulse rounded bg-muted" />
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <ProvenanceTag kind="run" />
+            <h1 className="truncate text-xl font-semibold tracking-tight">Homepage analysis</h1>
           </div>
         ) : (
-          <>
-            <div className="mt-2 flex flex-wrap items-center gap-2">
-              <ProvenanceTag kind="run" />
-              <h1 className="truncate text-xl font-semibold tracking-tight">{host || "Untitled analysis"}</h1>
-            </div>
-            <p className="mt-1 break-words text-sm text-muted-foreground">
-              {url || "Homepage result"}
-              {date ? ` · ${date}` : ""}
-            </p>
-          </>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <ProvenanceTag kind="run" />
+            <h1 className="truncate text-xl font-semibold tracking-tight">{host || "Untitled analysis"}</h1>
+          </div>
+        )}
+        {pending ? (
+          <div className="mt-1 h-4 w-56 animate-pulse rounded bg-muted" aria-hidden="true" />
+        ) : (
+          <p className="mt-1 break-words text-sm text-muted-foreground">
+            {url || "Homepage result"}
+            {date ? ` · ${date}` : ""}
+          </p>
         )}
       </div>
       <Link

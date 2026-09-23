@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { safeError } from "./analyze-errors";
 import { classifyFailure } from "./failure";
 
 describe("classifyFailure", () => {
@@ -85,5 +86,17 @@ describe("classifyFailure", () => {
     for (const code of apiCodes) {
       expect(classifyFailure(code, false).kind).not.toBe("unknown");
     }
+  });
+
+  it("never lets the raw server message contradict the classified kind", () => {
+    // RESPONSE_TOO_LARGE is about the fetched page size, not the URL the user typed.
+    const tooLarge = safeError(new Error("RESPONSE_TOO_LARGE"));
+    expect(tooLarge.message).not.toContain("URL");
+    expect(classifyFailure(tooLarge.code, true).kind).toBe("content");
+
+    // A genuine URL rejection still says so.
+    const badUrl = safeError(new Error("INVALID_URL"));
+    expect(badUrl.message).toContain("URL");
+    expect(classifyFailure(badUrl.code, false).kind).toBe("url");
   });
 });
