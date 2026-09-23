@@ -6,22 +6,23 @@ import type { TraceState } from "@/lib/analysis-trace";
 import { Button } from "@/components/ui/button";
 import { ProvenanceTag } from "./provenance-tag";
 
+import { classifyFailure } from "@/lib/failure";
+
 export function FailureRetry({
   error,
+  errorCode,
   trace,
   onRetry,
   editHref,
 }: {
   error: string;
+  errorCode?: string;
   trace: TraceState;
   onRetry: () => void;
   editHref: string;
 }) {
   const fetched = typeof trace.metrics.status === "number";
-  const title = fetched ? "Jev didn't return a result" : "Site unreachable";
-  const detail = fetched
-    ? "The homepage was fetched, but the classification step returned nothing. This is retryable."
-    : "The homepage could not be fetched. Check the URL and retry manually.";
+  const { title, detail } = classifyFailure(errorCode, fetched);
   const requestId = trace.result?.scrape.requestId;
 
   return (

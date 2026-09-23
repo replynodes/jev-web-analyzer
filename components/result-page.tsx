@@ -66,7 +66,7 @@ function SectionHeading({ title, description }: { title: string; description: st
 export function ResultPage() {
   const [status, setStatus] = useState<"checking" | "invalid" | "ready">("checking");
   const [requestedUrl, setRequestedUrl] = useState("");
-  const { result, error, trace, run, abort } = useAnalysis();
+  const { result, error, errorCode, trace, run, abort } = useAnalysis();
   const startedForRef = useRef<string | undefined>(undefined);
   const completedForRef = useRef<AnalysisResponse | undefined>(undefined);
 
@@ -118,7 +118,12 @@ export function ResultPage() {
     <main className="min-h-screen overflow-x-hidden px-4 py-5 md:px-8">
       <SiteHeader crumb="jev web analyzer / result" />
       <section className="mx-auto max-w-6xl pb-16 pt-10 md:pt-14">
-        <ResultHeaderStrip url={displayedUrl} startedAt={result?.timeline.startedAt} editHref={editHref} />
+        <ResultHeaderStrip
+          url={displayedUrl}
+          startedAt={result?.timeline.startedAt}
+          editHref={editHref}
+          pending={status === "checking"}
+        />
 
         {status === "invalid" && (
           <div
@@ -182,10 +187,12 @@ export function ResultPage() {
         )}
 
         {status === "ready" && !result && (error || trace.status === "failed") && (
-          <FailureRetry error={error} trace={trace} onRetry={retry} editHref={editHref} />
+          <FailureRetry error={error} errorCode={errorCode} trace={trace} onRetry={retry} editHref={editHref} />
         )}
 
-        {status === "ready" && !result && !error && trace.status !== "failed" && <LoadingState trace={trace} />}
+        {(status === "checking" || status === "ready") && !result && !error && trace.status !== "failed" && (
+          <LoadingState trace={trace} />
+        )}
       </section>
     </main>
   );
