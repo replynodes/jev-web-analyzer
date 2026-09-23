@@ -94,9 +94,9 @@ export function FirstImpression({ result }: { result: AnalysisResponse }) {
               </span>
             </figcaption>
             <blockquote className="mt-2">
-              <h1 className="text-xl font-semibold leading-snug tracking-[-0.015em] text-foreground md:text-2xl">
+              <p className="text-xl font-semibold leading-snug tracking-[-0.015em] text-foreground md:text-2xl">
                 {heading}
-              </h1>
+              </p>
             </blockquote>
           </figure>
         ) : (
