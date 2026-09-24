@@ -1,3 +1,7 @@
+export type LeaderboardAnswer =
+  | { type: "score"; value: number; probabilities?: Record<string, number>; confidence?: number }
+  | { type: "choice"; value: string; probabilities?: Record<string, number>; confidence?: number };
+
 export type LeaderboardRow = {
   domain: string;
   final_url?: string;
@@ -11,7 +15,7 @@ export type LeaderboardRow = {
   scrape_ms?: number;
   jev_ms?: number;
   total_ms?: number;
-  answers: Record<string, { type: "score" | "choice"; value: number | string; probabilities?: Record<string, number> }>;
+  answers: Record<string, LeaderboardAnswer>;
   overall?: number;
   usage?: { inputTokens?: number; outputTokens?: number; totalTokens?: number };
 };
@@ -33,7 +37,7 @@ function csvCell(value: unknown): string {
 }
 
 function questionColumns(questionIds: readonly string[]): string[] {
-  return questionIds.flatMap((id) => [`${id}_value`, `${id}_probabilities`]);
+  return questionIds.flatMap((id) => [`${id}_value`, `${id}_probabilities`, `${id}_confidence`]);
 }
 
 function rowValues(row: LeaderboardRow, questionIds: readonly string[]): unknown[] {
@@ -46,6 +50,7 @@ function rowValues(row: LeaderboardRow, questionIds: readonly string[]): unknown
     return [
       answer ? answer.value : undefined,
       answer?.probabilities ? JSON.stringify(answer.probabilities) : undefined,
+      answer?.confidence,
     ];
   });
   const suffix = [row.overall, row.usage?.inputTokens, row.usage?.outputTokens, row.usage?.totalTokens];

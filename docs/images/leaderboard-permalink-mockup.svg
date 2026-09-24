@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900" role="img" aria-labelledby="title desc">
+  <title id="title">Jev leaderboard — domain permalink page</title>
+  <desc id="desc">A Jev leaderboard permalink page showing a domain's overall score, five sub-scores with matched rubric levels, and run evidence.</desc>
+  <rect width="1440" height="900" fill="#fcfcfc"/>
+  <g font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" fill="#111">
+    <!-- Header -->
+    <rect x="44" y="24" width="30" height="30" rx="7" fill="#A2D98A"/>
+    <line x1="59" y1="39" x2="51" y2="31" stroke="#223835" stroke-width="1.6" stroke-linecap="round"/>
+    <line x1="59" y1="39" x2="67" y2="31" stroke="#223835" stroke-width="1.6" stroke-linecap="round"/>
+    <line x1="59" y1="39" x2="51" y2="47" stroke="#223835" stroke-width="1.6" stroke-linecap="round"/>
+    <line x1="59" y1="39" x2="67" y2="47" stroke="#223835" stroke-width="1.6" stroke-linecap="round"/>
+    <circle cx="51" cy="31" r="2.6" fill="#223835"/><circle cx="67" cy="31" r="2.6" fill="#223835"/>
+    <circle cx="51" cy="47" r="2.6" fill="#223835"/><circle cx="67" cy="47" r="2.6" fill="#223835"/>
+    <circle cx="59" cy="39" r="5" fill="#223835"/><circle cx="59" cy="39" r="2.6" fill="#A2D98A"/>
+    <text x="82" y="46" font-size="20" font-weight="700">ReplyNodes</text>
+    <text x="193" y="46" font-size="20" fill="#777">/</text>
+    <text x="213" y="46" font-size="19" fill="#666">shipfa.st</text>
+
+    <!-- Back link -->
+    <text x="360" y="118" font-size="16" fill="#888">&#8592; Back to leaderboard</text>
+
+    <!-- Title + score pill -->
+    <text x="360" y="176" font-size="44" font-weight="700">shipfa.st</text>
+    <rect x="560" y="150" width="108" height="38" rx="19" fill="#4c1"/>
+    <text x="580" y="175" font-size="18" font-weight="700" fill="#fff">88/100</text>
+
+    <text x="360" y="212" font-size="15" fill="#888">Rubric version v1  ·  Analyzed September 20, 2026  ·  https://shipfa.st/</text>
+
+    <!-- Sub-score cards -->
+    <g font-size="16">
+      <!-- Clarity what is it -->
+      <rect x="360" y="252" width="720" height="76" rx="14" fill="#fff" stroke="#e5e5e5"/>
+      <text x="384" y="284" font-weight="600">Clarity what is it</text>
+      <rect x="960" y="266" width="70" height="26" rx="13" fill="#f2f2f2"/>
+      <text x="972" y="284" font-size="13" font-weight="700">3.8 / 4</text>
+      <rect x="1042" y="266" width="130" height="26" rx="13" fill="#f2f2f2"/>
+      <text x="1054" y="284" font-size="12" fill="#666">92% confidence</text>
+      <text x="384" y="310" font-size="14" fill="#777">A first-time visitor can state precisely what the product does within the first screenful of content.</text>
+
+      <!-- CTA clarity -->
+      <rect x="360" y="340" width="720" height="76" rx="14" fill="#fff" stroke="#e5e5e5"/>
+      <text x="384" y="372" font-weight="600">CTA clarity</text>
+      <rect x="960" y="354" width="70" height="26" rx="13" fill="#f2f2f2"/>
+      <text x="972" y="372" font-size="13" font-weight="700">3.7 / 4</text>
+      <text x="384" y="398" font-size="14" fill="#777">One primary call-to-action is immediately visible and unambiguous about what happens next.</text>
+
+      <!-- Differentiation -->
+      <rect x="360" y="428" width="720" height="76" rx="14" fill="#fff" stroke="#e5e5e5"/>
+      <text x="384" y="460" font-weight="600">Differentiation</text>
+      <rect x="960" y="442" width="70" height="26" rx="13" fill="#f2f2f2"/>
+      <text x="972" y="460" font-size="13" font-weight="700">3.0 / 4</text>
+      <text x="384" y="486" font-size="14" fill="#777">A specific distinction is named and briefly explained.</text>
+
+      <!-- Pricing visibility -->
+      <rect x="360" y="516" width="720" height="70" rx="14" fill="#fff" stroke="#e5e5e5"/>
+      <text x="384" y="547" font-weight="600">Pricing visibility</text>
+      <text x="384" y="572" font-size="14" fill="#777">Visible price — reported as a category, not part of the score.</text>
+    </g>
+
+    <!-- Run evidence -->
+    <rect x="360" y="610" width="720" height="88" rx="14" fill="none" stroke="#ddd" stroke-dasharray="4 4"/>
+    <text x="384" y="638" font-size="15" font-weight="600">Run evidence</text>
+    <g font-size="13" fill="#666">
+      <text x="384" y="668">Scrape</text><text x="384" y="686" fill="#111" font-family="ui-monospace, monospace">754 ms</text>
+      <text x="524" y="668">Jev</text><text x="524" y="686" fill="#111" font-family="ui-monospace, monospace">2260 ms</text>
+      <text x="664" y="668">Total</text><text x="664" y="686" fill="#111" font-family="ui-monospace, monospace">3054 ms</text>
+      <text x="804" y="668">ReplyNodes request</text><text x="804" y="686" fill="#111" font-family="ui-monospace, monospace">sample-req-…</text>
+    </g>
+  </g>
+</svg>

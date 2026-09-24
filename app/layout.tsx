@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { AnalyticsProvider } from "@/components/analytics-provider";
+import { SITE_URL } from "@/lib/leaderboard-format";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,6 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "Jev Web Analyzer · ReplyNodes",
   description: "Analyze web context with ReplyNodes and Jev via Vercel AI Gateway.",
 };
