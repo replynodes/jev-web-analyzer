@@ -89,7 +89,7 @@ function LeaderboardPreview({ rows }: { rows: LeaderboardRow[] }) {
           <p className="mt-0.5 text-xs text-muted-foreground">How other homepages score against the same rubric.</p>
         </div>
         <Button asChild variant="outline" size="sm">
-          <Link href="/leaderboard">Xem thêm →</Link>
+          <Link href="/leaderboard">See more →</Link>
         </Button>
       </div>
       <ul className="mt-3 divide-y">
