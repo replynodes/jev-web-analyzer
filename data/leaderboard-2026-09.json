@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-20T09:30:00.000Z",
+  "generated_at": "2026-09-20T08:30:00.000Z",
   "rubric_version": "v1",
   "sample": true,
   "rows": [
@@ -8,49 +8,506 @@
       "final_url": "https://chatbase.ai/",
       "rubric_version": "v1",
       "status": "ok",
-      "fetched_at": "2026-09-20T09:00:00.000Z",
+      "fetched_at": "2026-09-20T08:00:00.000Z",
       "request_id": "sample-req-dfff6833490a",
       "markdown_sha256": "9dba8820c3a49eda2414144cc21df5cf1ec01aeb794e89b3f4a755e2941fb263",
-      "markdown_length": 18400,
-      "scrape_ms": 812,
-      "jev_ms": 2140,
-      "total_ms": 2992,
+      "markdown_length": 14551,
+      "scrape_ms": 959,
+      "jev_ms": 2119,
+      "total_ms": 3115,
       "answers": {
         "clarity_what_is_it": {
           "type": "score",
-          "value": 3.4,
+          "value": 2.5,
           "probabilities": {
-            "3": 0.6,
-            "4": 0.4
+            "2": 0.5,
+            "3": 0.5
           },
-          "confidence": 0.88
+          "confidence": 0.7
         },
         "clarity_icp": {
           "type": "score",
-          "value": 3.1,
+          "value": 2.7,
           "probabilities": {
-            "3": 0.9,
-            "4": 0.1
+            "2": 0.3,
+            "3": 0.7
           },
-          "confidence": 0.71
+          "confidence": 0.76
         },
         "cta_clarity": {
           "type": "score",
-          "value": 3.8,
+          "value": 2.1,
           "probabilities": {
-            "3": 0.2,
-            "4": 0.8
+            "2": 0.9,
+            "3": 0.1
+          },
+          "confidence": 0.7
+        },
+        "differentiation": {
+          "type": "score",
+          "value": 2,
+          "probabilities": {
+            "2": 1
+          },
+          "confidence": 0.9
+        },
+        "evidence_trust": {
+          "type": "score",
+          "value": 2,
+          "probabilities": {
+            "2": 1
+          },
+          "confidence": 0.58
+        },
+        "pricing_visibility": {
+          "type": "choice",
+          "value": "visible_price",
+          "probabilities": {
+            "visible_price": 0.65,
+            "freemium_or_free_trial": 0.05,
+            "contact_sales_only": 0.15,
+            "no_pricing_info": 0.15
+          },
+          "confidence": 0.66
+        }
+      },
+      "overall": 57,
+      "usage": {
+        "inputTokens": 4107,
+        "outputTokens": 161,
+        "totalTokens": 4268
+      }
+    },
+    {
+      "domain": "rezi.io",
+      "final_url": "https://rezi.io/",
+      "rubric_version": "v1",
+      "status": "ok",
+      "fetched_at": "2026-09-20T08:07:00.000Z",
+      "request_id": "sample-req-c79d3a8fa970",
+      "markdown_sha256": "2b033e97e004a86862991101d11ee30987f9ca8f76ae54a1a0d5517898d36b2d",
+      "markdown_length": 22828,
+      "scrape_ms": 699,
+      "jev_ms": 1902,
+      "total_ms": 2624,
+      "answers": {
+        "clarity_what_is_it": {
+          "type": "score",
+          "value": 1.1,
+          "probabilities": {
+            "1": 0.9,
+            "2": 0.1
+          },
+          "confidence": 0.75
+        },
+        "clarity_icp": {
+          "type": "score",
+          "value": 0.9,
+          "probabilities": {
+            "0": 0.1,
+            "1": 0.9
+          },
+          "confidence": 0.69
+        },
+        "cta_clarity": {
+          "type": "score",
+          "value": 1.7,
+          "probabilities": {
+            "1": 0.3,
+            "2": 0.7
+          },
+          "confidence": 0.93
+        },
+        "differentiation": {
+          "type": "score",
+          "value": 1.2,
+          "probabilities": {
+            "1": 0.8,
+            "2": 0.2
+          },
+          "confidence": 0.72
+        },
+        "evidence_trust": {
+          "type": "score",
+          "value": 1.6,
+          "probabilities": {
+            "1": 0.4,
+            "2": 0.6
+          },
+          "confidence": 0.94
+        },
+        "pricing_visibility": {
+          "type": "choice",
+          "value": "visible_price",
+          "probabilities": {
+            "visible_price": 0.7,
+            "freemium_or_free_trial": 0.06,
+            "contact_sales_only": 0.04,
+            "no_pricing_info": 0.21
+          },
+          "confidence": 0.75
+        }
+      },
+      "overall": 33,
+      "usage": {
+        "inputTokens": 3208,
+        "outputTokens": 181,
+        "totalTokens": 3389
+      }
+    },
+    {
+      "domain": "postiz.com",
+      "final_url": "https://postiz.com/",
+      "rubric_version": "v1",
+      "status": "ok",
+      "fetched_at": "2026-09-20T08:14:00.000Z",
+      "request_id": "sample-req-0b4fe9486353",
+      "markdown_sha256": "55de2ebd003fcfea347f27e6e49ae2eb15c5962e9b13ce555f15648aa6ed1178",
+      "markdown_length": 11383,
+      "scrape_ms": 969,
+      "jev_ms": 1561,
+      "total_ms": 2602,
+      "answers": {
+        "clarity_what_is_it": {
+          "type": "score",
+          "value": 2.7,
+          "probabilities": {
+            "2": 0.3,
+            "3": 0.7
+          },
+          "confidence": 0.93
+        },
+        "clarity_icp": {
+          "type": "score",
+          "value": 2.8,
+          "probabilities": {
+            "2": 0.2,
+            "3": 0.8
+          },
+          "confidence": 0.67
+        },
+        "cta_clarity": {
+          "type": "score",
+          "value": 2.5,
+          "probabilities": {
+            "2": 0.5,
+            "3": 0.5
           },
           "confidence": 0.63
         },
         "differentiation": {
+          "type": "score",
+          "value": 3.3,
+          "probabilities": {
+            "3": 0.7,
+            "4": 0.3
+          },
+          "confidence": 0.75
+        },
+        "evidence_trust": {
           "type": "score",
           "value": 2.6,
           "probabilities": {
             "2": 0.4,
             "3": 0.6
           },
-          "confidence": 0.92
+          "confidence": 0.58
+        },
+        "pricing_visibility": {
+          "type": "choice",
+          "value": "freemium_or_free_trial",
+          "probabilities": {
+            "visible_price": 0.06,
+            "freemium_or_free_trial": 0.7,
+            "contact_sales_only": 0.1,
+            "no_pricing_info": 0.14
+          },
+          "confidence": 0.52
+        }
+      },
+      "overall": 70,
+      "usage": {
+        "inputTokens": 2875,
+        "outputTokens": 242,
+        "totalTokens": 3117
+      }
+    },
+    {
+      "domain": "datafa.st",
+      "final_url": "https://datafa.st/",
+      "rubric_version": "v1",
+      "status": "ok",
+      "fetched_at": "2026-09-20T08:21:00.000Z",
+      "request_id": "sample-req-074bb3737940",
+      "markdown_sha256": "13c8b6eab09c79a5132b2cba7c9be0d7e7996546d68d7eb3bb5da37a5f8cabaf",
+      "markdown_length": 10683,
+      "scrape_ms": 628,
+      "jev_ms": 1926,
+      "total_ms": 2632,
+      "answers": {
+        "clarity_what_is_it": {
+          "type": "score",
+          "value": 1.5,
+          "probabilities": {
+            "1": 0.5,
+            "2": 0.5
+          },
+          "confidence": 0.89
+        },
+        "clarity_icp": {
+          "type": "score",
+          "value": 1.7,
+          "probabilities": {
+            "1": 0.3,
+            "2": 0.7
+          },
+          "confidence": 0.78
+        },
+        "cta_clarity": {
+          "type": "score",
+          "value": 1.5,
+          "probabilities": {
+            "1": 0.5,
+            "2": 0.5
+          },
+          "confidence": 0.55
+        },
+        "differentiation": {
+          "type": "score",
+          "value": 1.3,
+          "probabilities": {
+            "1": 0.7,
+            "2": 0.3
+          },
+          "confidence": 0.64
+        },
+        "evidence_trust": {
+          "type": "score",
+          "value": 1.9,
+          "probabilities": {
+            "1": 0.1,
+            "2": 0.9
+          },
+          "confidence": 0.91
+        },
+        "pricing_visibility": {
+          "type": "choice",
+          "value": "visible_price",
+          "probabilities": {
+            "visible_price": 0.71,
+            "freemium_or_free_trial": 0.07,
+            "contact_sales_only": 0.05,
+            "no_pricing_info": 0.16
+          },
+          "confidence": 0.73
+        }
+      },
+      "overall": 40,
+      "usage": {
+        "inputTokens": 3828,
+        "outputTokens": 146,
+        "totalTokens": 3974
+      }
+    },
+    {
+      "domain": "shipfa.st",
+      "final_url": "https://shipfa.st/",
+      "rubric_version": "v1",
+      "status": "ok",
+      "fetched_at": "2026-09-20T08:28:00.000Z",
+      "request_id": "sample-req-1dec735f1258",
+      "markdown_sha256": "41b309f0a1625067b965a04e1f04b06244de19f1f8e4c89cc0f3fbd18f11bb8f",
+      "markdown_length": 20715,
+      "scrape_ms": 641,
+      "jev_ms": 1643,
+      "total_ms": 2348,
+      "answers": {
+        "clarity_what_is_it": {
+          "type": "score",
+          "value": 2,
+          "probabilities": {
+            "2": 1
+          },
+          "confidence": 0.5
+        },
+        "clarity_icp": {
+          "type": "score",
+          "value": 1.7,
+          "probabilities": {
+            "1": 0.3,
+            "2": 0.7
+          },
+          "confidence": 0.77
+        },
+        "cta_clarity": {
+          "type": "score",
+          "value": 1.5,
+          "probabilities": {
+            "1": 0.5,
+            "2": 0.5
+          },
+          "confidence": 0.73
+        },
+        "differentiation": {
+          "type": "score",
+          "value": 2.4,
+          "probabilities": {
+            "2": 0.6,
+            "3": 0.4
+          },
+          "confidence": 0.57
+        },
+        "evidence_trust": {
+          "type": "score",
+          "value": 1.7,
+          "probabilities": {
+            "1": 0.3,
+            "2": 0.7
+          },
+          "confidence": 0.75
+        },
+        "pricing_visibility": {
+          "type": "choice",
+          "value": "freemium_or_free_trial",
+          "probabilities": {
+            "visible_price": 0.04,
+            "freemium_or_free_trial": 0.75,
+            "contact_sales_only": 0.07,
+            "no_pricing_info": 0.14
+          },
+          "confidence": 0.68
+        }
+      },
+      "overall": 47,
+      "usage": {
+        "inputTokens": 3875,
+        "outputTokens": 251,
+        "totalTokens": 4126
+      }
+    },
+    {
+      "domain": "codefa.st",
+      "final_url": "https://codefa.st/",
+      "rubric_version": "v1",
+      "status": "ok",
+      "fetched_at": "2026-09-20T08:35:00.000Z",
+      "request_id": "sample-req-2348cbe572c3",
+      "markdown_sha256": "56c5191b1b2e6ddde431fa589b57fe69b30f24f03eb0435b621e4d2c0c1793ba",
+      "markdown_length": 17828,
+      "scrape_ms": 806,
+      "jev_ms": 2345,
+      "total_ms": 3179,
+      "answers": {
+        "clarity_what_is_it": {
+          "type": "score",
+          "value": 1.3,
+          "probabilities": {
+            "1": 0.7,
+            "2": 0.3
+          },
+          "confidence": 0.71
+        },
+        "clarity_icp": {
+          "type": "score",
+          "value": 0.8,
+          "probabilities": {
+            "0": 0.2,
+            "1": 0.8
+          },
+          "confidence": 0.77
+        },
+        "cta_clarity": {
+          "type": "score",
+          "value": 1.6,
+          "probabilities": {
+            "1": 0.4,
+            "2": 0.6
+          },
+          "confidence": 0.72
+        },
+        "differentiation": {
+          "type": "score",
+          "value": 1,
+          "probabilities": {
+            "1": 1
+          },
+          "confidence": 0.66
+        },
+        "evidence_trust": {
+          "type": "score",
+          "value": 1.3,
+          "probabilities": {
+            "1": 0.7,
+            "2": 0.3
+          },
+          "confidence": 0.63
+        },
+        "pricing_visibility": {
+          "type": "choice",
+          "value": "freemium_or_free_trial",
+          "probabilities": {
+            "visible_price": 0.15,
+            "freemium_or_free_trial": 0.68,
+            "contact_sales_only": 0.08,
+            "no_pricing_info": 0.09
+          },
+          "confidence": 0.72
+        }
+      },
+      "overall": 30,
+      "usage": {
+        "inputTokens": 2103,
+        "outputTokens": 268,
+        "totalTokens": 2371
+      }
+    },
+    {
+      "domain": "posteahora.com",
+      "final_url": "https://posteahora.com/",
+      "rubric_version": "v1",
+      "status": "ok",
+      "fetched_at": "2026-09-20T08:42:00.000Z",
+      "request_id": "sample-req-2af40fa6ffba",
+      "markdown_sha256": "33feb9a7914eb59186ef0dcf8759be4504c498f961d1f78acfdca1aabc9c63ad",
+      "markdown_length": 18821,
+      "scrape_ms": 698,
+      "jev_ms": 1846,
+      "total_ms": 2575,
+      "answers": {
+        "clarity_what_is_it": {
+          "type": "score",
+          "value": 3.8,
+          "probabilities": {
+            "3": 0.2,
+            "4": 0.8
+          },
+          "confidence": 0.7
+        },
+        "clarity_icp": {
+          "type": "score",
+          "value": 3,
+          "probabilities": {
+            "3": 1
+          },
+          "confidence": 0.91
+        },
+        "cta_clarity": {
+          "type": "score",
+          "value": 3.1,
+          "probabilities": {
+            "3": 0.9,
+            "4": 0.1
+          },
+          "confidence": 0.72
+        },
+        "differentiation": {
+          "type": "score",
+          "value": 3.8,
+          "probabilities": {
+            "3": 0.2,
+            "4": 0.8
+          },
+          "confidence": 0.88
         },
         "evidence_trust": {
           "type": "score",
@@ -59,116 +516,421 @@
             "3": 0.8,
             "4": 0.2
           },
+          "confidence": 0.88
+        },
+        "pricing_visibility": {
+          "type": "choice",
+          "value": "contact_sales_only",
+          "probabilities": {
+            "visible_price": 0.13,
+            "freemium_or_free_trial": 0.1,
+            "contact_sales_only": 0.74,
+            "no_pricing_info": 0.03
+          },
+          "confidence": 0.94
+        }
+      },
+      "overall": 85,
+      "usage": {
+        "inputTokens": 3398,
+        "outputTokens": 303,
+        "totalTokens": 3701
+      }
+    },
+    {
+      "domain": "goutsnap.com",
+      "final_url": "https://goutsnap.com/",
+      "rubric_version": "v1",
+      "status": "ok",
+      "fetched_at": "2026-09-20T08:49:00.000Z",
+      "request_id": "sample-req-a91e091c7f1f",
+      "markdown_sha256": "cd30765fac97a6c97f44cc30a1f39b183e9b092948cc76823ccf608be81f1454",
+      "markdown_length": 20221,
+      "scrape_ms": 566,
+      "jev_ms": 2095,
+      "total_ms": 2723,
+      "answers": {
+        "clarity_what_is_it": {
+          "type": "score",
+          "value": 1.8,
+          "probabilities": {
+            "1": 0.2,
+            "2": 0.8
+          },
+          "confidence": 0.54
+        },
+        "clarity_icp": {
+          "type": "score",
+          "value": 1.2,
+          "probabilities": {
+            "1": 0.8,
+            "2": 0.2
+          },
+          "confidence": 0.85
+        },
+        "cta_clarity": {
+          "type": "score",
+          "value": 1.6,
+          "probabilities": {
+            "1": 0.4,
+            "2": 0.6
+          },
+          "confidence": 0.6
+        },
+        "differentiation": {
+          "type": "score",
+          "value": 1.7,
+          "probabilities": {
+            "1": 0.3,
+            "2": 0.7
+          },
+          "confidence": 0.77
+        },
+        "evidence_trust": {
+          "type": "score",
+          "value": 1.1,
+          "probabilities": {
+            "1": 0.9,
+            "2": 0.1
+          },
+          "confidence": 0.94
+        },
+        "pricing_visibility": {
+          "type": "choice",
+          "value": "contact_sales_only",
+          "probabilities": {
+            "visible_price": 0.05,
+            "freemium_or_free_trial": 0.06,
+            "contact_sales_only": 0.77,
+            "no_pricing_info": 0.12
+          },
+          "confidence": 0.53
+        }
+      },
+      "overall": 37,
+      "usage": {
+        "inputTokens": 2722,
+        "outputTokens": 157,
+        "totalTokens": 2879
+      }
+    },
+    {
+      "domain": "carcatcher.app",
+      "final_url": "https://carcatcher.app/",
+      "rubric_version": "v1",
+      "status": "ok",
+      "fetched_at": "2026-09-20T08:56:00.000Z",
+      "request_id": "sample-req-400dcae05a25",
+      "markdown_sha256": "099e1f5211027a1a3c420f1137ad8a2d97aecb17edc65b1076f11c95b29f4f1c",
+      "markdown_length": 13783,
+      "scrape_ms": 928,
+      "jev_ms": 1734,
+      "total_ms": 2723,
+      "answers": {
+        "clarity_what_is_it": {
+          "type": "score",
+          "value": 3.2,
+          "probabilities": {
+            "3": 0.8,
+            "4": 0.2
+          },
+          "confidence": 0.92
+        },
+        "clarity_icp": {
+          "type": "score",
+          "value": 3.8,
+          "probabilities": {
+            "3": 0.2,
+            "4": 0.8
+          },
+          "confidence": 0.93
+        },
+        "cta_clarity": {
+          "type": "score",
+          "value": 3.1,
+          "probabilities": {
+            "3": 0.9,
+            "4": 0.1
+          },
+          "confidence": 0.8
+        },
+        "differentiation": {
+          "type": "score",
+          "value": 4,
+          "probabilities": {
+            "4": 1
+          },
+          "confidence": 0.52
+        },
+        "evidence_trust": {
+          "type": "score",
+          "value": 3.7,
+          "probabilities": {
+            "3": 0.3,
+            "4": 0.7
+          },
           "confidence": 0.58
+        },
+        "pricing_visibility": {
+          "type": "choice",
+          "value": "visible_price",
+          "probabilities": {
+            "visible_price": 0.67,
+            "freemium_or_free_trial": 0.16,
+            "contact_sales_only": 0.11,
+            "no_pricing_info": 0.05
+          },
+          "confidence": 0.6
+        }
+      },
+      "overall": 89,
+      "usage": {
+        "inputTokens": 2828,
+        "outputTokens": 186,
+        "totalTokens": 3014
+      }
+    },
+    {
+      "domain": "wheeloflife.app",
+      "final_url": "https://wheeloflife.app/",
+      "rubric_version": "v1",
+      "status": "ok",
+      "fetched_at": "2026-09-20T09:03:00.000Z",
+      "request_id": "sample-req-7d1ca73d5880",
+      "markdown_sha256": "780d311a2ead615e4d75bc11a7beeef31c8119879dd13e178b70dcb0b985e956",
+      "markdown_length": 12544,
+      "scrape_ms": 1090,
+      "jev_ms": 2249,
+      "total_ms": 3364,
+      "answers": {
+        "clarity_what_is_it": {
+          "type": "score",
+          "value": 1.3,
+          "probabilities": {
+            "1": 0.7,
+            "2": 0.3
+          },
+          "confidence": 0.94
+        },
+        "clarity_icp": {
+          "type": "score",
+          "value": 1,
+          "probabilities": {
+            "1": 1
+          },
+          "confidence": 0.5
+        },
+        "cta_clarity": {
+          "type": "score",
+          "value": 1.3,
+          "probabilities": {
+            "1": 0.7,
+            "2": 0.3
+          },
+          "confidence": 0.68
+        },
+        "differentiation": {
+          "type": "score",
+          "value": 1,
+          "probabilities": {
+            "1": 1
+          },
+          "confidence": 0.53
+        },
+        "evidence_trust": {
+          "type": "score",
+          "value": 0.8,
+          "probabilities": {
+            "0": 0.2,
+            "1": 0.8
+          },
+          "confidence": 0.63
         },
         "pricing_visibility": {
           "type": "choice",
           "value": "freemium_or_free_trial",
           "probabilities": {
-            "visible_price": 0.05,
-            "freemium_or_free_trial": 0.83,
-            "contact_sales_only": 0.1,
-            "no_pricing_info": 0.02
+            "visible_price": 0.14,
+            "freemium_or_free_trial": 0.76,
+            "contact_sales_only": 0.02,
+            "no_pricing_info": 0.07
           },
-          "confidence": 0.92
+          "confidence": 0.54
         }
       },
-      "overall": 81,
+      "overall": 27,
       "usage": {
-        "inputTokens": 2400,
-        "outputTokens": 180,
-        "totalTokens": 2580
+        "inputTokens": 2394,
+        "outputTokens": 294,
+        "totalTokens": 2688
       }
     },
     {
-      "domain": "rezi.com",
-      "final_url": "https://rezi.com/",
+      "domain": "checkform.app",
+      "final_url": "https://checkform.app/",
       "rubric_version": "v1",
       "status": "ok",
-      "fetched_at": "2026-09-20T09:11:00.000Z",
-      "request_id": "sample-req-74aba142a8bf",
-      "markdown_sha256": "0d5a10da3649653bc90207dbc6b1c18599d3a0f9df08865c452b32e9fe4dcdf0",
-      "markdown_length": 14200,
-      "scrape_ms": 940,
-      "jev_ms": 1980,
-      "total_ms": 2967,
+      "fetched_at": "2026-09-20T09:10:00.000Z",
+      "request_id": "sample-req-3d5bd06f0ced",
+      "markdown_sha256": "088d67a685b484a4b872fc13f675de6d5ef5e450fba407a974bf632da31f3355",
+      "markdown_length": 14471,
+      "scrape_ms": 736,
+      "jev_ms": 2201,
+      "total_ms": 2985,
       "answers": {
         "clarity_what_is_it": {
           "type": "score",
-          "value": 3.6,
+          "value": 3.2,
           "probabilities": {
-            "3": 0.4,
-            "4": 0.6
+            "3": 0.8,
+            "4": 0.2
           },
-          "confidence": 0.71
+          "confidence": 0.73
         },
         "clarity_icp": {
           "type": "score",
-          "value": 3.5,
+          "value": 2.5,
           "probabilities": {
-            "3": 0.5,
-            "4": 0.5
+            "2": 0.5,
+            "3": 0.5
           },
-          "confidence": 0.63
+          "confidence": 0.95
         },
         "cta_clarity": {
-          "type": "score",
-          "value": 3.9,
-          "probabilities": {
-            "3": 0.1,
-            "4": 0.9
-          },
-          "confidence": 0.92
-        },
-        "differentiation": {
           "type": "score",
           "value": 2.2,
           "probabilities": {
             "2": 0.8,
             "3": 0.2
           },
-          "confidence": 0.58
+          "confidence": 0.71
+        },
+        "differentiation": {
+          "type": "score",
+          "value": 2.4,
+          "probabilities": {
+            "2": 0.6,
+            "3": 0.4
+          },
+          "confidence": 0.51
         },
         "evidence_trust": {
           "type": "score",
-          "value": 2.8,
+          "value": 3.1,
           "probabilities": {
-            "2": 0.2,
-            "3": 0.8
+            "3": 0.9,
+            "4": 0.1
           },
-          "confidence": 0.77
+          "confidence": 0.65
         },
         "pricing_visibility": {
           "type": "choice",
           "value": "freemium_or_free_trial",
           "probabilities": {
             "visible_price": 0.12,
-            "freemium_or_free_trial": 0.79,
-            "contact_sales_only": 0.03,
-            "no_pricing_info": 0.06
+            "freemium_or_free_trial": 0.69,
+            "contact_sales_only": 0.12,
+            "no_pricing_info": 0.08
           },
-          "confidence": 0.58
+          "confidence": 0.77
         }
       },
-      "overall": 80,
+      "overall": 67,
       "usage": {
-        "inputTokens": 2530,
-        "outputTokens": 192,
-        "totalTokens": 2722
+        "inputTokens": 3598,
+        "outputTokens": 199,
+        "totalTokens": 3797
       }
     },
     {
-      "domain": "postiz.ai",
-      "final_url": "https://postiz.ai/",
+      "domain": "boothie.app",
+      "final_url": "https://boothie.app/",
       "rubric_version": "v1",
       "status": "ok",
-      "fetched_at": "2026-09-20T09:22:00.000Z",
-      "request_id": "sample-req-215e291e1812",
-      "markdown_sha256": "33fc8a266fb62400f65e463899fcc24ef1e23498e7f7ab32b8a54407c7837c65",
-      "markdown_length": 9800,
-      "scrape_ms": 705,
-      "jev_ms": 1760,
-      "total_ms": 2519,
+      "fetched_at": "2026-09-20T09:17:00.000Z",
+      "request_id": "sample-req-1abe57845dbc",
+      "markdown_sha256": "475e7779795919197761b429b58c7f074e1b7c819784032dde7719abbde49e2b",
+      "markdown_length": 12207,
+      "scrape_ms": 719,
+      "jev_ms": 2141,
+      "total_ms": 2921,
+      "answers": {
+        "clarity_what_is_it": {
+          "type": "score",
+          "value": 1.4,
+          "probabilities": {
+            "1": 0.6,
+            "2": 0.4
+          },
+          "confidence": 0.81
+        },
+        "clarity_icp": {
+          "type": "score",
+          "value": 1.7,
+          "probabilities": {
+            "1": 0.3,
+            "2": 0.7
+          },
+          "confidence": 0.72
+        },
+        "cta_clarity": {
+          "type": "score",
+          "value": 1.2,
+          "probabilities": {
+            "1": 0.8,
+            "2": 0.2
+          },
+          "confidence": 0.74
+        },
+        "differentiation": {
+          "type": "score",
+          "value": 1.6,
+          "probabilities": {
+            "1": 0.4,
+            "2": 0.6
+          },
+          "confidence": 0.87
+        },
+        "evidence_trust": {
+          "type": "score",
+          "value": 1.5,
+          "probabilities": {
+            "1": 0.5,
+            "2": 0.5
+          },
+          "confidence": 0.59
+        },
+        "pricing_visibility": {
+          "type": "choice",
+          "value": "freemium_or_free_trial",
+          "probabilities": {
+            "visible_price": 0.06,
+            "freemium_or_free_trial": 0.8,
+            "contact_sales_only": 0.1,
+            "no_pricing_info": 0.05
+          },
+          "confidence": 0.68
+        }
+      },
+      "overall": 37,
+      "usage": {
+        "inputTokens": 2250,
+        "outputTokens": 263,
+        "totalTokens": 2513
+      }
+    },
+    {
+      "domain": "calories.app",
+      "final_url": "https://calories.app/",
+      "rubric_version": "v1",
+      "status": "ok",
+      "fetched_at": "2026-09-20T09:24:00.000Z",
+      "request_id": "sample-req-7591b4ce3594",
+      "markdown_sha256": "d1efbcb48f8e36be301ed48f0ab1b53cc2b7177a83f1235b70a1bdea3984b7ab",
+      "markdown_length": 22577,
+      "scrape_ms": 1023,
+      "jev_ms": 2394,
+      "total_ms": 3448,
       "answers": {
         "clarity_what_is_it": {
           "type": "score",
@@ -177,31 +939,261 @@
             "2": 0.1,
             "3": 0.9
           },
-          "confidence": 0.63
+          "confidence": 0.9
         },
         "clarity_icp": {
+          "type": "score",
+          "value": 2.9,
+          "probabilities": {
+            "2": 0.1,
+            "3": 0.9
+          },
+          "confidence": 0.57
+        },
+        "cta_clarity": {
+          "type": "score",
+          "value": 2.8,
+          "probabilities": {
+            "2": 0.2,
+            "3": 0.8
+          },
+          "confidence": 0.85
+        },
+        "differentiation": {
+          "type": "score",
+          "value": 3.6,
+          "probabilities": {
+            "3": 0.4,
+            "4": 0.6
+          },
+          "confidence": 0.63
+        },
+        "evidence_trust": {
+          "type": "score",
+          "value": 3.5,
+          "probabilities": {
+            "3": 0.5,
+            "4": 0.5
+          },
+          "confidence": 0.73
+        },
+        "pricing_visibility": {
+          "type": "choice",
+          "value": "freemium_or_free_trial",
+          "probabilities": {
+            "visible_price": 0.12,
+            "freemium_or_free_trial": 0.7,
+            "contact_sales_only": 0.13,
+            "no_pricing_info": 0.05
+          },
+          "confidence": 0.7
+        }
+      },
+      "overall": 78,
+      "usage": {
+        "inputTokens": 2018,
+        "outputTokens": 199,
+        "totalTokens": 2217
+      }
+    },
+    {
+      "domain": "taichi.app",
+      "final_url": "https://taichi.app/",
+      "rubric_version": "v1",
+      "status": "ok",
+      "fetched_at": "2026-09-20T09:31:00.000Z",
+      "request_id": "sample-req-33ae88fb0f3c",
+      "markdown_sha256": "4ca257692186836d565d9b7651c1c9fe68b6aff75f14d61e78d4f0dae9ba7e15",
+      "markdown_length": 21906,
+      "scrape_ms": 1096,
+      "jev_ms": 1591,
+      "total_ms": 2731,
+      "answers": {
+        "clarity_what_is_it": {
+          "type": "score",
+          "value": 1.9,
+          "probabilities": {
+            "1": 0.1,
+            "2": 0.9
+          },
+          "confidence": 0.66
+        },
+        "clarity_icp": {
+          "type": "score",
+          "value": 2.2,
+          "probabilities": {
+            "2": 0.8,
+            "3": 0.2
+          },
+          "confidence": 0.75
+        },
+        "cta_clarity": {
+          "type": "score",
+          "value": 2,
+          "probabilities": {
+            "2": 1
+          },
+          "confidence": 0.67
+        },
+        "differentiation": {
+          "type": "score",
+          "value": 1.6,
+          "probabilities": {
+            "1": 0.4,
+            "2": 0.6
+          },
+          "confidence": 0.61
+        },
+        "evidence_trust": {
+          "type": "score",
+          "value": 2,
+          "probabilities": {
+            "2": 1
+          },
+          "confidence": 0.6
+        },
+        "pricing_visibility": {
+          "type": "choice",
+          "value": "visible_price",
+          "probabilities": {
+            "visible_price": 0.75,
+            "freemium_or_free_trial": 0.16,
+            "contact_sales_only": 0.07,
+            "no_pricing_info": 0.03
+          },
+          "confidence": 0.67
+        }
+      },
+      "overall": 49,
+      "usage": {
+        "inputTokens": 3567,
+        "outputTokens": 257,
+        "totalTokens": 3824
+      }
+    },
+    {
+      "domain": "kotrol.app",
+      "final_url": "https://kotrol.app/",
+      "rubric_version": "v1",
+      "status": "ok",
+      "fetched_at": "2026-09-20T09:38:00.000Z",
+      "request_id": "sample-req-b2e0eecc906a",
+      "markdown_sha256": "b92660e28ab5052ffbf257b7260ce85e7bc415b5899a31634a84c3689093784c",
+      "markdown_length": 9618,
+      "scrape_ms": 806,
+      "jev_ms": 2221,
+      "total_ms": 3089,
+      "answers": {
+        "clarity_what_is_it": {
+          "type": "score",
+          "value": 1.5,
+          "probabilities": {
+            "1": 0.5,
+            "2": 0.5
+          },
+          "confidence": 0.91
+        },
+        "clarity_icp": {
+          "type": "score",
+          "value": 2.5,
+          "probabilities": {
+            "2": 0.5,
+            "3": 0.5
+          },
+          "confidence": 0.7
+        },
+        "cta_clarity": {
+          "type": "score",
+          "value": 2.6,
+          "probabilities": {
+            "2": 0.4,
+            "3": 0.6
+          },
+          "confidence": 0.77
+        },
+        "differentiation": {
+          "type": "score",
+          "value": 1.8,
+          "probabilities": {
+            "1": 0.2,
+            "2": 0.8
+          },
+          "confidence": 0.52
+        },
+        "evidence_trust": {
+          "type": "score",
+          "value": 2.5,
+          "probabilities": {
+            "2": 0.5,
+            "3": 0.5
+          },
+          "confidence": 0.69
+        },
+        "pricing_visibility": {
+          "type": "choice",
+          "value": "visible_price",
+          "probabilities": {
+            "visible_price": 0.72,
+            "freemium_or_free_trial": 0.1,
+            "contact_sales_only": 0.09,
+            "no_pricing_info": 0.1
+          },
+          "confidence": 0.84
+        }
+      },
+      "overall": 55,
+      "usage": {
+        "inputTokens": 4021,
+        "outputTokens": 155,
+        "totalTokens": 4176
+      }
+    },
+    {
+      "domain": "gtm.help",
+      "final_url": "https://gtm.help/",
+      "rubric_version": "v1",
+      "status": "ok",
+      "fetched_at": "2026-09-20T09:45:00.000Z",
+      "request_id": "sample-req-9237e3c29549",
+      "markdown_sha256": "469057484eaa62c73c6b1b59ee1a92b321c235769644a97c0e97ebbefb10dc37",
+      "markdown_length": 17873,
+      "scrape_ms": 560,
+      "jev_ms": 1730,
+      "total_ms": 2326,
+      "answers": {
+        "clarity_what_is_it": {
+          "type": "score",
+          "value": 2.1,
+          "probabilities": {
+            "2": 0.9,
+            "3": 0.1
+          },
+          "confidence": 0.81
+        },
+        "clarity_icp": {
+          "type": "score",
+          "value": 2.1,
+          "probabilities": {
+            "2": 0.9,
+            "3": 0.1
+          },
+          "confidence": 0.72
+        },
+        "cta_clarity": {
+          "type": "score",
+          "value": 1.3,
+          "probabilities": {
+            "1": 0.7,
+            "2": 0.3
+          },
+          "confidence": 0.73
+        },
+        "differentiation": {
           "type": "score",
           "value": 2.4,
           "probabilities": {
             "2": 0.6,
             "3": 0.4
-          },
-          "confidence": 0.92
-        },
-        "cta_clarity": {
-          "type": "score",
-          "value": 3.2,
-          "probabilities": {
-            "3": 0.8,
-            "4": 0.2
-          },
-          "confidence": 0.58
-        },
-        "differentiation": {
-          "type": "score",
-          "value": 2,
-          "probabilities": {
-            "2": 1
           },
           "confidence": 0.77
         },
@@ -212,200 +1204,506 @@
             "1": 0.2,
             "2": 0.8
           },
-          "confidence": 0.88
+          "confidence": 0.78
         },
         "pricing_visibility": {
           "type": "choice",
-          "value": "no_pricing_info",
+          "value": "freemium_or_free_trial",
           "probabilities": {
-            "visible_price": 0.04,
-            "freemium_or_free_trial": 0.31,
-            "contact_sales_only": 0.08,
-            "no_pricing_info": 0.57
+            "visible_price": 0.14,
+            "freemium_or_free_trial": 0.73,
+            "contact_sales_only": 0.09,
+            "no_pricing_info": 0.05
           },
-          "confidence": 0.77
+          "confidence": 0.91
         }
       },
-      "overall": 62,
+      "overall": 49,
       "usage": {
-        "inputTokens": 2660,
-        "outputTokens": 204,
-        "totalTokens": 2864
+        "inputTokens": 3061,
+        "outputTokens": 265,
+        "totalTokens": 3326
       }
     },
     {
-      "domain": "datafa.st",
-      "final_url": "https://datafa.st/",
+      "domain": "ultrawideo.com",
+      "final_url": "https://ultrawideo.com/",
       "rubric_version": "v1",
       "status": "ok",
-      "fetched_at": "2026-09-20T09:33:00.000Z",
-      "request_id": "sample-req-074bb3737940",
-      "markdown_sha256": "13c8b6eab09c79a5132b2cba7c9be0d7e7996546d68d7eb3bb5da37a5f8cabaf",
-      "markdown_length": 11600,
-      "scrape_ms": 688,
-      "jev_ms": 1820,
-      "total_ms": 2569,
+      "fetched_at": "2026-09-20T09:52:00.000Z",
+      "request_id": "sample-req-26e2e8bff939",
+      "markdown_sha256": "a04679535f2624904ec41ae31993811f0065502c0ee74569ea1903770f9b0bd3",
+      "markdown_length": 16198,
+      "scrape_ms": 973,
+      "jev_ms": 2395,
+      "total_ms": 3403,
       "answers": {
         "clarity_what_is_it": {
           "type": "score",
-          "value": 3,
+          "value": 4,
           "probabilities": {
-            "3": 1
+            "4": 1
           },
-          "confidence": 0.92
+          "confidence": 0.79
         },
         "clarity_icp": {
           "type": "score",
-          "value": 2.7,
+          "value": 4,
           "probabilities": {
-            "2": 0.3,
-            "3": 0.7
+            "4": 1
           },
-          "confidence": 0.58
+          "confidence": 0.61
         },
         "cta_clarity": {
           "type": "score",
-          "value": 2.5,
+          "value": 4,
           "probabilities": {
-            "2": 0.5,
-            "3": 0.5
+            "4": 1
           },
-          "confidence": 0.77
+          "confidence": 0.67
         },
         "differentiation": {
           "type": "score",
-          "value": 1.9,
+          "value": 3.2,
           "probabilities": {
-            "1": 0.1,
-            "2": 0.9
+            "3": 0.8,
+            "4": 0.2
           },
-          "confidence": 0.88
+          "confidence": 0.53
         },
         "evidence_trust": {
-          "type": "score",
-          "value": 2.2,
-          "probabilities": {
-            "2": 0.8,
-            "3": 0.2
-          },
-          "confidence": 0.71
-        },
-        "pricing_visibility": {
-          "type": "choice",
-          "value": "visible_price",
-          "probabilities": {
-            "visible_price": 0.74,
-            "freemium_or_free_trial": 0.14,
-            "contact_sales_only": 0.04,
-            "no_pricing_info": 0.08
-          },
-          "confidence": 0.88
-        }
-      },
-      "overall": 62,
-      "usage": {
-        "inputTokens": 2790,
-        "outputTokens": 216,
-        "totalTokens": 3006
-      }
-    },
-    {
-      "domain": "shipfa.st",
-      "final_url": "https://shipfa.st/",
-      "rubric_version": "v1",
-      "status": "ok",
-      "fetched_at": "2026-09-20T09:44:00.000Z",
-      "request_id": "sample-req-1dec735f1258",
-      "markdown_sha256": "41b309f0a1625067b965a04e1f04b06244de19f1f8e4c89cc0f3fbd18f11bb8f",
-      "markdown_length": 21300,
-      "scrape_ms": 754,
-      "jev_ms": 2260,
-      "total_ms": 3082,
-      "answers": {
-        "clarity_what_is_it": {
-          "type": "score",
-          "value": 3.8,
-          "probabilities": {
-            "3": 0.2,
-            "4": 0.8
-          },
-          "confidence": 0.58
-        },
-        "clarity_icp": {
-          "type": "score",
-          "value": 3.6,
-          "probabilities": {
-            "3": 0.4,
-            "4": 0.6
-          },
-          "confidence": 0.77
-        },
-        "cta_clarity": {
           "type": "score",
           "value": 3.7,
           "probabilities": {
             "3": 0.3,
             "4": 0.7
           },
-          "confidence": 0.88
+          "confidence": 0.51
+        },
+        "pricing_visibility": {
+          "type": "choice",
+          "value": "freemium_or_free_trial",
+          "probabilities": {
+            "visible_price": 0.06,
+            "freemium_or_free_trial": 0.73,
+            "contact_sales_only": 0.05,
+            "no_pricing_info": 0.16
+          },
+          "confidence": 0.69
+        }
+      },
+      "overall": 95,
+      "usage": {
+        "inputTokens": 4176,
+        "outputTokens": 302,
+        "totalTokens": 4478
+      }
+    },
+    {
+      "domain": "verbatik.com",
+      "final_url": "https://verbatik.com/",
+      "rubric_version": "v1",
+      "status": "ok",
+      "fetched_at": "2026-09-20T09:59:00.000Z",
+      "request_id": "sample-req-9a0742343162",
+      "markdown_sha256": "89f02c4bf57d6406672d56f7a73df0bc1f8a53408d766ad437401b4baf8d80c6",
+      "markdown_length": 9720,
+      "scrape_ms": 820,
+      "jev_ms": 2125,
+      "total_ms": 2995,
+      "answers": {
+        "clarity_what_is_it": {
+          "type": "score",
+          "value": 0.9,
+          "probabilities": {
+            "0": 0.1,
+            "1": 0.9
+          },
+          "confidence": 0.74
+        },
+        "clarity_icp": {
+          "type": "score",
+          "value": 1.2,
+          "probabilities": {
+            "1": 0.8,
+            "2": 0.2
+          },
+          "confidence": 0.79
+        },
+        "cta_clarity": {
+          "type": "score",
+          "value": 1.5,
+          "probabilities": {
+            "1": 0.5,
+            "2": 0.5
+          },
+          "confidence": 0.62
         },
         "differentiation": {
           "type": "score",
-          "value": 3,
+          "value": 1.6,
           "probabilities": {
-            "3": 1
+            "1": 0.4,
+            "2": 0.6
           },
-          "confidence": 0.71
+          "confidence": 0.54
         },
         "evidence_trust": {
+          "type": "score",
+          "value": 1.2,
+          "probabilities": {
+            "1": 0.8,
+            "2": 0.2
+          },
+          "confidence": 0.53
+        },
+        "pricing_visibility": {
+          "type": "choice",
+          "value": "freemium_or_free_trial",
+          "probabilities": {
+            "visible_price": 0.11,
+            "freemium_or_free_trial": 0.76,
+            "contact_sales_only": 0.06,
+            "no_pricing_info": 0.07
+          },
+          "confidence": 0.63
+        }
+      },
+      "overall": 32,
+      "usage": {
+        "inputTokens": 3259,
+        "outputTokens": 229,
+        "totalTokens": 3488
+      }
+    },
+    {
+      "domain": "draftly.com",
+      "final_url": "https://draftly.com/",
+      "rubric_version": "v1",
+      "status": "ok",
+      "fetched_at": "2026-09-20T10:06:00.000Z",
+      "request_id": "sample-req-3188d8f28af8",
+      "markdown_sha256": "0b85d2d17a98d5d8357aed1b35345d4dad791a74fab5ffbe27bd9e1497c9b514",
+      "markdown_length": 22911,
+      "scrape_ms": 1095,
+      "jev_ms": 1649,
+      "total_ms": 2814,
+      "answers": {
+        "clarity_what_is_it": {
+          "type": "score",
+          "value": 3.1,
+          "probabilities": {
+            "3": 0.9,
+            "4": 0.1
+          },
+          "confidence": 0.53
+        },
+        "clarity_icp": {
           "type": "score",
           "value": 3.4,
           "probabilities": {
             "3": 0.6,
             "4": 0.4
           },
-          "confidence": 0.63
+          "confidence": 0.71
+        },
+        "cta_clarity": {
+          "type": "score",
+          "value": 3.6,
+          "probabilities": {
+            "3": 0.4,
+            "4": 0.6
+          },
+          "confidence": 0.57
+        },
+        "differentiation": {
+          "type": "score",
+          "value": 3.3,
+          "probabilities": {
+            "3": 0.7,
+            "4": 0.3
+          },
+          "confidence": 0.78
+        },
+        "evidence_trust": {
+          "type": "score",
+          "value": 3.6,
+          "probabilities": {
+            "3": 0.4,
+            "4": 0.6
+          },
+          "confidence": 0.55
+        },
+        "pricing_visibility": {
+          "type": "choice",
+          "value": "freemium_or_free_trial",
+          "probabilities": {
+            "visible_price": 0.11,
+            "freemium_or_free_trial": 0.75,
+            "contact_sales_only": 0.05,
+            "no_pricing_info": 0.09
+          },
+          "confidence": 0.67
+        }
+      },
+      "overall": 85,
+      "usage": {
+        "inputTokens": 3161,
+        "outputTokens": 280,
+        "totalTokens": 3441
+      }
+    },
+    {
+      "domain": "vidfarm.cc",
+      "final_url": "https://vidfarm.cc/",
+      "rubric_version": "v1",
+      "status": "ok",
+      "fetched_at": "2026-09-20T10:13:00.000Z",
+      "request_id": "sample-req-81778ce29883",
+      "markdown_sha256": "0db52a01dae27e7e508817108ec6917de68b700bbc0784d5843683ac4ae27aab",
+      "markdown_length": 20951,
+      "scrape_ms": 905,
+      "jev_ms": 2585,
+      "total_ms": 3563,
+      "answers": {
+        "clarity_what_is_it": {
+          "type": "score",
+          "value": 2.3,
+          "probabilities": {
+            "2": 0.7,
+            "3": 0.3
+          },
+          "confidence": 0.53
+        },
+        "clarity_icp": {
+          "type": "score",
+          "value": 1.7,
+          "probabilities": {
+            "1": 0.3,
+            "2": 0.7
+          },
+          "confidence": 0.53
+        },
+        "cta_clarity": {
+          "type": "score",
+          "value": 2.4,
+          "probabilities": {
+            "2": 0.6,
+            "3": 0.4
+          },
+          "confidence": 0.72
+        },
+        "differentiation": {
+          "type": "score",
+          "value": 2.3,
+          "probabilities": {
+            "2": 0.7,
+            "3": 0.3
+          },
+          "confidence": 0.67
+        },
+        "evidence_trust": {
+          "type": "score",
+          "value": 2,
+          "probabilities": {
+            "2": 1
+          },
+          "confidence": 0.85
+        },
+        "pricing_visibility": {
+          "type": "choice",
+          "value": "freemium_or_free_trial",
+          "probabilities": {
+            "visible_price": 0.09,
+            "freemium_or_free_trial": 0.72,
+            "contact_sales_only": 0.07,
+            "no_pricing_info": 0.12
+          },
+          "confidence": 0.76
+        }
+      },
+      "overall": 53,
+      "usage": {
+        "inputTokens": 3833,
+        "outputTokens": 216,
+        "totalTokens": 4049
+      }
+    },
+    {
+      "domain": "animalo.com",
+      "final_url": "https://animalo.com/",
+      "rubric_version": "v1",
+      "status": "ok",
+      "fetched_at": "2026-09-20T10:20:00.000Z",
+      "request_id": "sample-req-12cd75e0b9cf",
+      "markdown_sha256": "fbe064c0f4115548afdf0f83728b083fb31e744ee5767d8d6bf06d5fa196a884",
+      "markdown_length": 8517,
+      "scrape_ms": 907,
+      "jev_ms": 2058,
+      "total_ms": 2996,
+      "answers": {
+        "clarity_what_is_it": {
+          "type": "score",
+          "value": 0.3,
+          "probabilities": {
+            "0": 0.7,
+            "1": 0.3
+          },
+          "confidence": 0.8
+        },
+        "clarity_icp": {
+          "type": "score",
+          "value": 0.3,
+          "probabilities": {
+            "0": 0.7,
+            "1": 0.3
+          },
+          "confidence": 0.67
+        },
+        "cta_clarity": {
+          "type": "score",
+          "value": 0.8,
+          "probabilities": {
+            "0": 0.2,
+            "1": 0.8
+          },
+          "confidence": 0.91
+        },
+        "differentiation": {
+          "type": "score",
+          "value": 1.2,
+          "probabilities": {
+            "1": 0.8,
+            "2": 0.2
+          },
+          "confidence": 0.93
+        },
+        "evidence_trust": {
+          "type": "score",
+          "value": 0.5,
+          "probabilities": {
+            "0": 0.5,
+            "1": 0.5
+          },
+          "confidence": 0.51
         },
         "pricing_visibility": {
           "type": "choice",
           "value": "visible_price",
           "probabilities": {
-            "visible_price": 0.91,
-            "freemium_or_free_trial": 0.03,
-            "contact_sales_only": 0.02,
-            "no_pricing_info": 0.04
+            "visible_price": 0.78,
+            "freemium_or_free_trial": 0.05,
+            "contact_sales_only": 0.1,
+            "no_pricing_info": 0.08
+          },
+          "confidence": 0.83
+        }
+      },
+      "overall": 15,
+      "usage": {
+        "inputTokens": 4188,
+        "outputTokens": 209,
+        "totalTokens": 4397
+      }
+    },
+    {
+      "domain": "1lookup.com",
+      "final_url": "https://1lookup.com/",
+      "rubric_version": "v1",
+      "status": "ok",
+      "fetched_at": "2026-09-20T10:27:00.000Z",
+      "request_id": "sample-req-17a52019607b",
+      "markdown_sha256": "a2bb4b87a7b852f948c839688fe698556a6921288862ebedffe5d30f54144d23",
+      "markdown_length": 19810,
+      "scrape_ms": 1022,
+      "jev_ms": 2185,
+      "total_ms": 3246,
+      "answers": {
+        "clarity_what_is_it": {
+          "type": "score",
+          "value": 0.3,
+          "probabilities": {
+            "0": 0.7,
+            "1": 0.3
+          },
+          "confidence": 0.51
+        },
+        "clarity_icp": {
+          "type": "score",
+          "value": 1.3,
+          "probabilities": {
+            "1": 0.7,
+            "2": 0.3
+          },
+          "confidence": 0.68
+        },
+        "cta_clarity": {
+          "type": "score",
+          "value": 0.4,
+          "probabilities": {
+            "0": 0.6,
+            "1": 0.4
+          },
+          "confidence": 0.78
+        },
+        "differentiation": {
+          "type": "score",
+          "value": 0.3,
+          "probabilities": {
+            "0": 0.7,
+            "1": 0.3
+          },
+          "confidence": 0.72
+        },
+        "evidence_trust": {
+          "type": "score",
+          "value": 0.8,
+          "probabilities": {
+            "0": 0.2,
+            "1": 0.8
+          },
+          "confidence": 0.5
+        },
+        "pricing_visibility": {
+          "type": "choice",
+          "value": "contact_sales_only",
+          "probabilities": {
+            "visible_price": 0.17,
+            "freemium_or_free_trial": 0.11,
+            "contact_sales_only": 0.64,
+            "no_pricing_info": 0.09
           },
           "confidence": 0.71
         }
       },
-      "overall": 88,
+      "overall": 15,
       "usage": {
-        "inputTokens": 2920,
-        "outputTokens": 228,
-        "totalTokens": 3148
+        "inputTokens": 2994,
+        "outputTokens": 173,
+        "totalTokens": 3167
       }
     },
     {
-      "domain": "codefa.st",
-      "final_url": "https://codefa.st/",
+      "domain": "cometly.com",
+      "final_url": "https://cometly.com/",
       "rubric_version": "v1",
       "status": "ok",
-      "fetched_at": "2026-09-20T09:55:00.000Z",
-      "request_id": "sample-req-2348cbe572c3",
-      "markdown_sha256": "56c5191b1b2e6ddde431fa589b57fe69b30f24f03eb0435b621e4d2c0c1793ba",
-      "markdown_length": 8200,
-      "scrape_ms": 662,
-      "jev_ms": 1690,
-      "total_ms": 2427,
+      "fetched_at": "2026-09-20T10:34:00.000Z",
+      "request_id": "sample-req-27e3dfc3027f",
+      "markdown_sha256": "738c3f7de86cee4a0cc7624d8142e523bd8104b929714655216b99cdfe8d5a11",
+      "markdown_length": 14397,
+      "scrape_ms": 632,
+      "jev_ms": 2158,
+      "total_ms": 2814,
       "answers": {
         "clarity_what_is_it": {
           "type": "score",
-          "value": 2.5,
+          "value": 1.7,
           "probabilities": {
-            "2": 0.5,
-            "3": 0.5
+            "1": 0.3,
+            "2": 0.7
           },
-          "confidence": 0.77
+          "confidence": 0.79
         },
         "clarity_icp": {
           "type": "score",
@@ -413,7 +1711,83 @@
           "probabilities": {
             "2": 1
           },
-          "confidence": 0.88
+          "confidence": 0.93
+        },
+        "cta_clarity": {
+          "type": "score",
+          "value": 2,
+          "probabilities": {
+            "2": 1
+          },
+          "confidence": 0.51
+        },
+        "differentiation": {
+          "type": "score",
+          "value": 1.6,
+          "probabilities": {
+            "1": 0.4,
+            "2": 0.6
+          },
+          "confidence": 0.7
+        },
+        "evidence_trust": {
+          "type": "score",
+          "value": 1.9,
+          "probabilities": {
+            "1": 0.1,
+            "2": 0.9
+          },
+          "confidence": 0.93
+        },
+        "pricing_visibility": {
+          "type": "choice",
+          "value": "visible_price",
+          "probabilities": {
+            "visible_price": 0.67,
+            "freemium_or_free_trial": 0.12,
+            "contact_sales_only": 0.11,
+            "no_pricing_info": 0.1
+          },
+          "confidence": 0.83
+        }
+      },
+      "overall": 46,
+      "usage": {
+        "inputTokens": 3106,
+        "outputTokens": 274,
+        "totalTokens": 3380
+      }
+    },
+    {
+      "domain": "supliful.com",
+      "final_url": "https://supliful.com/",
+      "rubric_version": "v1",
+      "status": "ok",
+      "fetched_at": "2026-09-20T10:41:00.000Z",
+      "request_id": "sample-req-9675ef39f5e9",
+      "markdown_sha256": "bd8b433f1e0094f273442efed4a55ed06ac1c65799b885f4b4156f99b651a043",
+      "markdown_length": 23742,
+      "scrape_ms": 705,
+      "jev_ms": 2089,
+      "total_ms": 2852,
+      "answers": {
+        "clarity_what_is_it": {
+          "type": "score",
+          "value": 3.2,
+          "probabilities": {
+            "3": 0.8,
+            "4": 0.2
+          },
+          "confidence": 0.68
+        },
+        "clarity_icp": {
+          "type": "score",
+          "value": 3.8,
+          "probabilities": {
+            "3": 0.2,
+            "4": 0.8
+          },
+          "confidence": 0.78
         },
         "cta_clarity": {
           "type": "score",
@@ -422,16 +1796,170 @@
             "2": 0.2,
             "3": 0.8
           },
-          "confidence": 0.71
+          "confidence": 0.54
         },
         "differentiation": {
           "type": "score",
-          "value": 1.5,
+          "value": 3.7,
           "probabilities": {
-            "1": 0.5,
-            "2": 0.5
+            "3": 0.3,
+            "4": 0.7
           },
-          "confidence": 0.63
+          "confidence": 0.56
+        },
+        "evidence_trust": {
+          "type": "score",
+          "value": 3.5,
+          "probabilities": {
+            "3": 0.5,
+            "4": 0.5
+          },
+          "confidence": 0.78
+        },
+        "pricing_visibility": {
+          "type": "choice",
+          "value": "freemium_or_free_trial",
+          "probabilities": {
+            "visible_price": 0.03,
+            "freemium_or_free_trial": 0.69,
+            "contact_sales_only": 0.14,
+            "no_pricing_info": 0.15
+          },
+          "confidence": 0.53
+        }
+      },
+      "overall": 85,
+      "usage": {
+        "inputTokens": 2964,
+        "outputTokens": 270,
+        "totalTokens": 3234
+      }
+    },
+    {
+      "domain": "replyga.in",
+      "final_url": "https://replyga.in/",
+      "rubric_version": "v1",
+      "status": "ok",
+      "fetched_at": "2026-09-20T10:48:00.000Z",
+      "request_id": "sample-req-8c3a90119235",
+      "markdown_sha256": "51e1ae76ece4117f0ffd1a53298aaa1eace074e4058de6734a495f4d573d53a1",
+      "markdown_length": 9058,
+      "scrape_ms": 1095,
+      "jev_ms": 1551,
+      "total_ms": 2721,
+      "answers": {
+        "clarity_what_is_it": {
+          "type": "score",
+          "value": 3.1,
+          "probabilities": {
+            "3": 0.9,
+            "4": 0.1
+          },
+          "confidence": 0.78
+        },
+        "clarity_icp": {
+          "type": "score",
+          "value": 2.9,
+          "probabilities": {
+            "2": 0.1,
+            "3": 0.9
+          },
+          "confidence": 0.67
+        },
+        "cta_clarity": {
+          "type": "score",
+          "value": 3.1,
+          "probabilities": {
+            "3": 0.9,
+            "4": 0.1
+          },
+          "confidence": 0.61
+        },
+        "differentiation": {
+          "type": "score",
+          "value": 2.2,
+          "probabilities": {
+            "2": 0.8,
+            "3": 0.2
+          },
+          "confidence": 0.56
+        },
+        "evidence_trust": {
+          "type": "score",
+          "value": 2.2,
+          "probabilities": {
+            "2": 0.8,
+            "3": 0.2
+          },
+          "confidence": 0.7
+        },
+        "pricing_visibility": {
+          "type": "choice",
+          "value": "visible_price",
+          "probabilities": {
+            "visible_price": 0.77,
+            "freemium_or_free_trial": 0.06,
+            "contact_sales_only": 0.11,
+            "no_pricing_info": 0.06
+          },
+          "confidence": 0.69
+        }
+      },
+      "overall": 68,
+      "usage": {
+        "inputTokens": 1939,
+        "outputTokens": 297,
+        "totalTokens": 2236
+      }
+    },
+    {
+      "domain": "quickclip.app",
+      "final_url": "https://quickclip.app/",
+      "rubric_version": "v1",
+      "status": "ok",
+      "fetched_at": "2026-09-20T10:55:00.000Z",
+      "request_id": "sample-req-41b4b140a14b",
+      "markdown_sha256": "0e3c2ef3e632f5779e73ed127a5fb6ca2f4141f514b2bd36f449add00c9e0a95",
+      "markdown_length": 9628,
+      "scrape_ms": 563,
+      "jev_ms": 2528,
+      "total_ms": 3142,
+      "answers": {
+        "clarity_what_is_it": {
+          "type": "score",
+          "value": 1.8,
+          "probabilities": {
+            "1": 0.2,
+            "2": 0.8
+          },
+          "confidence": 0.74
+        },
+        "clarity_icp": {
+          "type": "score",
+          "value": 1.3,
+          "probabilities": {
+            "1": 0.7,
+            "2": 0.3
+          },
+          "confidence": 0.66
+        },
+        "cta_clarity": {
+          "type": "score",
+          "value": 1.8,
+          "probabilities": {
+            "1": 0.2,
+            "2": 0.8
+          },
+          "confidence": 0.57
+        },
+        "differentiation": {
+          "type": "score",
+          "value": 1.8,
+          "probabilities": {
+            "1": 0.2,
+            "2": 0.8
+          },
+          "confidence": 0.92
         },
         "evidence_trust": {
           "type": "score",
@@ -440,25 +1968,331 @@
             "1": 0.4,
             "2": 0.6
           },
-          "confidence": 0.92
+          "confidence": 0.8
         },
         "pricing_visibility": {
           "type": "choice",
-          "value": "contact_sales_only",
+          "value": "freemium_or_free_trial",
           "probabilities": {
-            "visible_price": 0.18,
-            "freemium_or_free_trial": 0.09,
-            "contact_sales_only": 0.51,
-            "no_pricing_info": 0.22
+            "visible_price": 0.1,
+            "freemium_or_free_trial": 0.69,
+            "contact_sales_only": 0.09,
+            "no_pricing_info": 0.12
           },
-          "confidence": 0.63
+          "confidence": 0.87
         }
       },
-      "overall": 52,
+      "overall": 42,
       "usage": {
-        "inputTokens": 3050,
-        "outputTokens": 240,
-        "totalTokens": 3290
+        "inputTokens": 2216,
+        "outputTokens": 218,
+        "totalTokens": 2434
+      }
+    },
+    {
+      "domain": "victrays.com",
+      "final_url": "https://victrays.com/",
+      "rubric_version": "v1",
+      "status": "ok",
+      "fetched_at": "2026-09-20T11:02:00.000Z",
+      "request_id": "sample-req-9397e3ed4f18",
+      "markdown_sha256": "f378aa799b75f8c38ecb93d20a3c13b11acce5e7fffbf02e3809bcf78609fa3c",
+      "markdown_length": 14602,
+      "scrape_ms": 1037,
+      "jev_ms": 1605,
+      "total_ms": 2703,
+      "answers": {
+        "clarity_what_is_it": {
+          "type": "score",
+          "value": 1.6,
+          "probabilities": {
+            "1": 0.4,
+            "2": 0.6
+          },
+          "confidence": 0.78
+        },
+        "clarity_icp": {
+          "type": "score",
+          "value": 2,
+          "probabilities": {
+            "2": 1
+          },
+          "confidence": 0.61
+        },
+        "cta_clarity": {
+          "type": "score",
+          "value": 1.6,
+          "probabilities": {
+            "1": 0.4,
+            "2": 0.6
+          },
+          "confidence": 0.67
+        },
+        "differentiation": {
+          "type": "score",
+          "value": 1.9,
+          "probabilities": {
+            "1": 0.1,
+            "2": 0.9
+          },
+          "confidence": 0.9
+        },
+        "evidence_trust": {
+          "type": "score",
+          "value": 1,
+          "probabilities": {
+            "1": 1
+          },
+          "confidence": 0.58
+        },
+        "pricing_visibility": {
+          "type": "choice",
+          "value": "visible_price",
+          "probabilities": {
+            "visible_price": 0.89,
+            "freemium_or_free_trial": 0.03,
+            "contact_sales_only": 0.05,
+            "no_pricing_info": 0.03
+          },
+          "confidence": 0.8
+        }
+      },
+      "overall": 41,
+      "usage": {
+        "inputTokens": 3576,
+        "outputTokens": 180,
+        "totalTokens": 3756
+      }
+    },
+    {
+      "domain": "taprefer.com",
+      "final_url": "https://taprefer.com/",
+      "rubric_version": "v1",
+      "status": "ok",
+      "fetched_at": "2026-09-20T11:09:00.000Z",
+      "request_id": "sample-req-422084741724",
+      "markdown_sha256": "c805cccedc508f1b1a91a4e56dc535fbaba1e9cd947cd4b1be82fb5cccb948d1",
+      "markdown_length": 10434,
+      "scrape_ms": 603,
+      "jev_ms": 1574,
+      "total_ms": 2199,
+      "answers": {
+        "clarity_what_is_it": {
+          "type": "score",
+          "value": 3.2,
+          "probabilities": {
+            "3": 0.8,
+            "4": 0.2
+          },
+          "confidence": 0.69
+        },
+        "clarity_icp": {
+          "type": "score",
+          "value": 2.8,
+          "probabilities": {
+            "2": 0.2,
+            "3": 0.8
+          },
+          "confidence": 0.83
+        },
+        "cta_clarity": {
+          "type": "score",
+          "value": 3.5,
+          "probabilities": {
+            "3": 0.5,
+            "4": 0.5
+          },
+          "confidence": 0.8
+        },
+        "differentiation": {
+          "type": "score",
+          "value": 2.8,
+          "probabilities": {
+            "2": 0.2,
+            "3": 0.8
+          },
+          "confidence": 0.58
+        },
+        "evidence_trust": {
+          "type": "score",
+          "value": 3.4,
+          "probabilities": {
+            "3": 0.6,
+            "4": 0.4
+          },
+          "confidence": 0.65
+        },
+        "pricing_visibility": {
+          "type": "choice",
+          "value": "freemium_or_free_trial",
+          "probabilities": {
+            "visible_price": 0.14,
+            "freemium_or_free_trial": 0.79,
+            "contact_sales_only": 0.03,
+            "no_pricing_info": 0.05
+          },
+          "confidence": 0.52
+        }
+      },
+      "overall": 79,
+      "usage": {
+        "inputTokens": 3894,
+        "outputTokens": 313,
+        "totalTokens": 4207
+      }
+    },
+    {
+      "domain": "brandmymac.com",
+      "final_url": "https://brandmymac.com/",
+      "rubric_version": "v1",
+      "status": "ok",
+      "fetched_at": "2026-09-20T11:16:00.000Z",
+      "request_id": "sample-req-a6702f5337bb",
+      "markdown_sha256": "56a37aa12ca1c5e7b242eec148f467332b17a848156498f8413a179f2ab3f053",
+      "markdown_length": 23940,
+      "scrape_ms": 1046,
+      "jev_ms": 1606,
+      "total_ms": 2720,
+      "answers": {
+        "clarity_what_is_it": {
+          "type": "score",
+          "value": 3.1,
+          "probabilities": {
+            "3": 0.9,
+            "4": 0.1
+          },
+          "confidence": 0.73
+        },
+        "clarity_icp": {
+          "type": "score",
+          "value": 2.4,
+          "probabilities": {
+            "2": 0.6,
+            "3": 0.4
+          },
+          "confidence": 0.94
+        },
+        "cta_clarity": {
+          "type": "score",
+          "value": 2.2,
+          "probabilities": {
+            "2": 0.8,
+            "3": 0.2
+          },
+          "confidence": 0.61
+        },
+        "differentiation": {
+          "type": "score",
+          "value": 2.6,
+          "probabilities": {
+            "2": 0.4,
+            "3": 0.6
+          },
+          "confidence": 0.58
+        },
+        "evidence_trust": {
+          "type": "score",
+          "value": 2.9,
+          "probabilities": {
+            "2": 0.1,
+            "3": 0.9
+          },
+          "confidence": 0.88
+        },
+        "pricing_visibility": {
+          "type": "choice",
+          "value": "visible_price",
+          "probabilities": {
+            "visible_price": 0.78,
+            "freemium_or_free_trial": 0.04,
+            "contact_sales_only": 0.11,
+            "no_pricing_info": 0.07
+          },
+          "confidence": 0.88
+        }
+      },
+      "overall": 66,
+      "usage": {
+        "inputTokens": 3101,
+        "outputTokens": 145,
+        "totalTokens": 3246
+      }
+    },
+    {
+      "domain": "promptwise.ai",
+      "final_url": "https://promptwise.ai/",
+      "rubric_version": "v1",
+      "status": "ok",
+      "fetched_at": "2026-09-20T11:23:00.000Z",
+      "request_id": "sample-req-a27123d16bc4",
+      "markdown_sha256": "cdd8a97c45f19223cc545e249726e1c110ac4a1c3232db1c57ad9ecd39f7e3c6",
+      "markdown_length": 23452,
+      "scrape_ms": 1057,
+      "jev_ms": 1612,
+      "total_ms": 2734,
+      "answers": {
+        "clarity_what_is_it": {
+          "type": "score",
+          "value": 0.7,
+          "probabilities": {
+            "0": 0.3,
+            "1": 0.7
+          },
+          "confidence": 0.61
+        },
+        "clarity_icp": {
+          "type": "score",
+          "value": 0.6,
+          "probabilities": {
+            "0": 0.4,
+            "1": 0.6
+          },
+          "confidence": 0.88
+        },
+        "cta_clarity": {
+          "type": "score",
+          "value": 0.9,
+          "probabilities": {
+            "0": 0.1,
+            "1": 0.9
+          },
+          "confidence": 0.92
+        },
+        "differentiation": {
+          "type": "score",
+          "value": 1.1,
+          "probabilities": {
+            "1": 0.9,
+            "2": 0.1
+          },
+          "confidence": 0.77
+        },
+        "evidence_trust": {
+          "type": "score",
+          "value": 0.7,
+          "probabilities": {
+            "0": 0.3,
+            "1": 0.7
+          },
+          "confidence": 0.79
+        },
+        "pricing_visibility": {
+          "type": "choice",
+          "value": "visible_price",
+          "probabilities": {
+            "visible_price": 0.71,
+            "freemium_or_free_trial": 0.14,
+            "contact_sales_only": 0.13,
+            "no_pricing_info": 0.02
+          },
+          "confidence": 0.8
+        }
+      },
+      "overall": 20,
+      "usage": {
+        "inputTokens": 2489,
+        "outputTokens": 295,
+        "totalTokens": 2784
       }
     }
   ]

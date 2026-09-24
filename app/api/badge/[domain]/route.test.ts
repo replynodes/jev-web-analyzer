@@ -6,7 +6,7 @@ describe("GET /api/badge/[domain]", () => {
     const response = await GET(new Request("http://test/api/badge/shipfa.st"), { params: Promise.resolve({ domain: "shipfa.st" }) });
     expect(response.status).toBe(200);
     const body = await response.json();
-    expect(body).toMatchObject({ schemaVersion: 1, label: "jev score", message: "88/100", color: "brightgreen" });
+    expect(body).toMatchObject({ schemaVersion: 1, label: "jev score", message: "47/100", color: "yellow" });
   });
 
   it("still returns HTTP 200 (not 404) with isError:true for an unknown domain, so shields.io renders the custom message instead of its own generic error badge", async () => {
