@@ -185,7 +185,7 @@ export function statusForDisplay(name: string, value: string): SignalStatus {
   }
 }
 
-const ACRONYMS: Record<string, string> = {
+export const ACRONYMS: Record<string, string> = {
   cta: "CTA",
   api: "API",
   saas: "SaaS",

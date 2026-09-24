@@ -1,30 +1,24 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ConfidenceBadge } from "@/components/result/signal-parts";
 import { SiteHeader } from "@/components/site-header";
-import type { LeaderboardRow } from "@/lib/csv";
-import { badgeMarkdown, formatRunDate, labelForQuestionId, loadLeaderboard, matchedLevelDescription, pricingLabel, scoreBand } from "@/lib/leaderboard";
-import { loadRubric } from "@/lib/rubric";
+import { isLowConfidence } from "@/lib/confidence";
+import type { LeaderboardData } from "@/lib/leaderboard";
+import { badgeMarkdown, formatRunDate, labelForQuestionId, loadLeaderboardData, matchedLevelDescription, pricingLabel, scoreBand } from "@/lib/leaderboard";
+import { cn } from "@/lib/utils";
 
-function findRow(domain: string): LeaderboardRow | undefined {
-  try {
-    return loadLeaderboard().rows.find((row) => row.domain === domain);
-  } catch {
-    return undefined;
-  }
+function findRow(data: LeaderboardData | null, domain: string) {
+  return data?.dataset.rows.find((row) => row.domain === domain);
 }
 
 export function generateStaticParams() {
-  try {
-    return loadLeaderboard().rows.map((row) => ({ domain: row.domain }));
-  } catch {
-    return [];
-  }
+  return loadLeaderboardData()?.dataset.rows.map((row) => ({ domain: row.domain })) ?? [];
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ domain: string }> }): Promise<Metadata> {
   const { domain } = await params;
-  const row = findRow(domain);
+  const row = findRow(loadLeaderboardData(), domain);
   if (!row || row.status !== "ok") return { title: `${domain} · Jev leaderboard · ReplyNodes` };
   return {
     title: `${domain} — ${row.overall}/100 · Jev leaderboard · ReplyNodes`,
@@ -34,12 +28,17 @@ export async function generateMetadata({ params }: { params: Promise<{ domain: s
 
 export default async function LeaderboardDomainPage({ params }: { params: Promise<{ domain: string }> }) {
   const { domain } = await params;
-  const row = findRow(domain);
-  if (!row) notFound();
+  const data = loadLeaderboardData();
+  const row = findRow(data, domain);
+  if (!data || !row) notFound();
 
-  const dataset = loadLeaderboard();
-  const rubric = loadRubric();
+  const { dataset, rubric } = data;
   const band = row.overall === undefined ? undefined : scoreBand(row.overall);
+  // A row scored under a different rubric_version than the one currently
+  // loaded would show level text that never actually applied to that
+  // judgment (rubric text can change between versions) — skip the matched
+  // description rather than risk showing the wrong one.
+  const rubricMatchesRow = row.rubric_version === rubric.rubric_version;
 
   return (
     <main className="mx-auto flex max-w-3xl flex-col gap-6 px-4 py-10">
@@ -59,7 +58,7 @@ export default async function LeaderboardDomainPage({ params }: { params: Promis
           ) : null}
         </div>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
-          <span>Rubric version <b className="font-mono text-foreground">{row.rubric_version || dataset.rubric_version}</b></span>
+          <span>Rubric version <b className="font-mono text-foreground">{row.rubric_version}</b></span>
           <span>Analyzed <b className="text-foreground">{formatRunDate(row.fetched_at)}</b></span>
           {row.final_url ? (
             <a href={row.final_url} target="_blank" rel="noreferrer" className="underline underline-offset-2">{row.final_url}</a>
@@ -84,18 +83,15 @@ export default async function LeaderboardDomainPage({ params }: { params: Promis
             const answer = row.answers[id];
             const question = rubric.questions[id];
             if (!answer || answer.type !== "score" || !question) return null;
-            const description = matchedLevelDescription(question, answer);
+            const description = rubricMatchesRow ? matchedLevelDescription(question, answer) : undefined;
+            const low = isLowConfidence(answer.confidence);
             return (
-              <article key={id} className="rounded-xl border bg-card p-4 shadow-sm">
+              <article key={id} className={cn("rounded-xl border bg-card p-4 shadow-sm", low && "border-[#eccb92] dark:border-[#6b4d1c]")}>
                 <div className="flex items-start justify-between gap-3">
                   <h2 className="text-sm font-semibold">{labelForQuestionId(id)}</h2>
                   <div className="flex items-center gap-2">
                     <span className="rounded-full border bg-muted px-2 py-0.5 text-xs font-bold tabular-nums">{answer.value.toFixed(1)} / 4</span>
-                    {typeof answer.confidence === "number" ? (
-                      <span className="whitespace-nowrap rounded-full border bg-muted px-2 py-0.5 text-[11px] font-bold text-muted-foreground">
-                        {Math.round(answer.confidence * 100)}% confidence
-                      </span>
-                    ) : null}
+                    <ConfidenceBadge confidence={answer.confidence} />
                   </div>
                 </div>
                 {description ? <p className="mt-2 text-sm text-muted-foreground">{description}</p> : null}
@@ -104,14 +100,10 @@ export default async function LeaderboardDomainPage({ params }: { params: Promis
           })}
 
           {row.answers.pricing_visibility ? (
-            <article className="rounded-xl border bg-card p-4 shadow-sm">
+            <article className={cn("rounded-xl border bg-card p-4 shadow-sm", isLowConfidence(row.answers.pricing_visibility.confidence) && "border-[#eccb92] dark:border-[#6b4d1c]")}>
               <div className="flex items-start justify-between gap-3">
                 <h2 className="text-sm font-semibold">Pricing visibility</h2>
-                {typeof row.answers.pricing_visibility.confidence === "number" ? (
-                  <span className="whitespace-nowrap rounded-full border bg-muted px-2 py-0.5 text-[11px] font-bold text-muted-foreground">
-                    {Math.round(row.answers.pricing_visibility.confidence * 100)}% confidence
-                  </span>
-                ) : null}
+                <ConfidenceBadge confidence={row.answers.pricing_visibility.confidence} />
               </div>
               <p className="mt-2 text-sm text-muted-foreground">{pricingLabel(String(row.answers.pricing_visibility.value))} — reported as a category, not part of the score.</p>
             </article>

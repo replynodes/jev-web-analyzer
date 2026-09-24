@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { loadLeaderboard, scoreBand } from "@/lib/leaderboard";
+import { loadLeaderboardData, scoreBand } from "@/lib/leaderboard";
 
 type ShieldsEndpoint = {
   schemaVersion: 1;
@@ -12,15 +12,14 @@ type ShieldsEndpoint = {
 
 export async function GET(_request: Request, { params }: { params: Promise<{ domain: string }> }) {
   const { domain } = await params;
-
-  let row;
-  try {
-    row = loadLeaderboard().rows.find((candidate) => candidate.domain === domain);
-  } catch {
-    row = undefined;
-  }
+  const row = loadLeaderboardData()?.dataset.rows.find((candidate) => candidate.domain === domain);
 
   if (!row || row.status !== "ok" || row.overall === undefined) {
+    // shields.io's endpoint badge discards the response body for any non-200
+    // status and renders its own generic error badge instead of reading
+    // `isError`/`message` — so this must return 200 for the custom "not
+    // analyzed" badge to actually render. isError:true is shields' own
+    // documented mechanism for signaling an error state within a 200.
     const body: ShieldsEndpoint = {
       schemaVersion: 1,
       label: "jev score",
@@ -28,7 +27,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ dom
       color: "lightgrey",
       isError: true,
     };
-    return NextResponse.json(body, { status: 404 });
+    return NextResponse.json(body);
   }
 
   const band = scoreBand(row.overall);

@@ -1,20 +1,14 @@
 import { ImageResponse } from "next/og";
-import { loadLeaderboard } from "@/lib/leaderboard";
+import { loadLeaderboardData } from "@/lib/leaderboard";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export const alt = "Jev homepage leaderboard";
 
 export default async function Image() {
-  let domainCount = 0;
-  let rubricVersion = "v1";
-  try {
-    const dataset = loadLeaderboard();
-    domainCount = dataset.rows.filter((row) => row.status === "ok").length;
-    rubricVersion = dataset.rubric_version;
-  } catch {
-    // no dataset yet; render the image with zero-count copy below
-  }
+  const data = loadLeaderboardData();
+  const domainCount = data?.dataset.rows.filter((row) => row.status === "ok").length ?? 0;
+  const rubricVersion = data?.dataset.rubric_version ?? "v1";
 
   return new ImageResponse(
     (

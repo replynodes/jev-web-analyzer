@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { SiteHeader } from "@/components/site-header";
 import { LeaderboardTable } from "@/components/leaderboard/leaderboard-table";
-import { formatRunDate, loadLeaderboard, scoreQuestionMeta } from "@/lib/leaderboard";
-import { loadRubric } from "@/lib/rubric";
+import { formatRunDate, loadLeaderboardData, scoreQuestionMeta } from "@/lib/leaderboard";
 
 export const metadata: Metadata = {
   title: "Leaderboard · Jev Web Analyzer · ReplyNodes",
@@ -10,14 +9,9 @@ export const metadata: Metadata = {
 };
 
 export default function LeaderboardPage() {
-  let dataset;
-  try {
-    dataset = loadLeaderboard();
-  } catch {
-    dataset = null;
-  }
+  const data = loadLeaderboardData();
 
-  if (!dataset) {
+  if (!data) {
     return (
       <main className="mx-auto flex max-w-5xl flex-col gap-6 px-4 py-10">
         <SiteHeader crumb="Leaderboard" />
@@ -26,7 +20,7 @@ export default function LeaderboardPage() {
     );
   }
 
-  const rubric = loadRubric();
+  const { dataset, rubric } = data;
   const scoreQuestions = scoreQuestionMeta(rubric);
   const okRows = dataset.rows.filter((row) => row.status === "ok");
   const failedCount = dataset.rows.length - okRows.length;

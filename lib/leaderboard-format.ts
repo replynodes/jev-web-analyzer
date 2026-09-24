@@ -1,3 +1,4 @@
+import { ACRONYMS } from "./signal-map";
 import type { RubricFile, RubricQuestion } from "./rubric";
 
 export type ScoreBand = { label: string; shieldsColor: string; hex: string };
@@ -68,6 +69,6 @@ export function scoreQuestionMeta(rubric: RubricFile): RubricQuestionMeta[] {
 export function labelForQuestionId(id: string): string {
   return id
     .split("_")
-    .map((word) => (word === "icp" || word === "cta" ? word.toUpperCase() : word.charAt(0).toUpperCase() + word.slice(1)))
+    .map((word) => ACRONYMS[word] ?? word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 }

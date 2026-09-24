@@ -1,6 +1,5 @@
 import { ImageResponse } from "next/og";
-import { labelForQuestionId, loadLeaderboard, scoreBand } from "@/lib/leaderboard";
-import { loadRubric } from "@/lib/rubric";
+import { labelForQuestionId, loadLeaderboardData, scoreBand } from "@/lib/leaderboard";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
@@ -8,14 +7,10 @@ export const alt = "Jev leaderboard score";
 
 export default async function Image({ params }: { params: { domain: string } }) {
   const { domain } = params;
-  let row;
-  try {
-    row = loadLeaderboard().rows.find((candidate) => candidate.domain === domain);
-  } catch {
-    row = undefined;
-  }
+  const data = loadLeaderboardData();
+  const row = data?.dataset.rows.find((candidate) => candidate.domain === domain);
 
-  if (!row || row.status !== "ok" || row.overall === undefined) {
+  if (!data || !row || row.status !== "ok" || row.overall === undefined) {
     return new ImageResponse(
       (
         <div
@@ -32,13 +27,11 @@ export default async function Image({ params }: { params: { domain: string } }) 
     );
   }
 
-  const rubric = loadRubric();
+  const { rubric } = data;
   const band = scoreBand(row.overall);
-  const bars = rubric.score_question_ids.map((id) => {
-    const answer = row.answers[id];
-    const value = answer?.type === "score" ? (answer.value as number) : 0;
-    return { id, label: labelForQuestionId(id), value };
-  });
+  const bars = rubric.score_question_ids
+    .filter((id) => row.answers[id]?.type === "score")
+    .map((id) => ({ id, label: labelForQuestionId(id), value: row.answers[id].value as number }));
 
   return new ImageResponse(
     (
