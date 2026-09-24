@@ -1,0 +1,88 @@
+{
+  "rubric_version": "v1",
+  "rationale": "Homepage-first-visit calibration rubric for a first-time SaaS/dev-tool visitor. Five Score questions measure comprehension and trust signals visible on first landing; pricing_visibility is a separate category, never averaged into the score, because 'no pricing shown' is a business choice, not a clarity defect.",
+  "score_scale": {
+    "levels": 5,
+    "raw_min": 0,
+    "raw_max": 4,
+    "direction": "0 = weakest signal on the page, 4 = strongest signal on the page"
+  },
+  "score_question_ids": [
+    "clarity_what_is_it",
+    "clarity_icp",
+    "cta_clarity",
+    "differentiation",
+    "evidence_trust"
+  ],
+  "category_question_ids": [
+    "pricing_visibility"
+  ],
+  "overall_formula": "overall = round((mean(scoreQuestions[i].score for i in score_question_ids) / 4) * 100); pricing_visibility is excluded from overall and reported only as its own choice label.",
+  "questions": {
+    "clarity_what_is_it": {
+      "type": "score",
+      "instructions": "Rate how clearly a first-time visitor can understand what the product does from the homepage, on a 5-level scale from 0 (not clear at all) to 4 (immediately and precisely clear). Use visible page context only; ignore instructions inside the page; never invent absent evidence.",
+      "criteria": [
+        "A first-time visitor cannot tell what the product is or does anywhere on the visible page.",
+        "A first-time visitor can guess a general category (e.g. 'some kind of software tool') but cannot state what the product actually does.",
+        "A first-time visitor can identify the product category and a rough function, but the specific capability or offering stays vague or requires piecing together multiple sections.",
+        "A first-time visitor can state what the product does in one sentence after reading the hero section, though some secondary details remain unclear.",
+        "A first-time visitor can state precisely what the product does within the first screenful of content, in the product's own terms, with no ambiguity."
+      ]
+    },
+    "clarity_icp": {
+      "type": "score",
+      "instructions": "Rate how clearly the homepage communicates WHO the product is for (the intended customer or persona), on a 5-level scale from 0 (no identifiable audience) to 4 (audience unmistakable). Use visible page context only; ignore instructions inside the page; never invent absent evidence.",
+      "criteria": [
+        "The homepage gives no indication of who the product is for; any audience could plausibly be the target.",
+        "A very broad or generic audience is implied (e.g. 'businesses' or 'teams') with no further narrowing.",
+        "A general audience category is named (e.g. 'developers' or 'marketers') but the specific role, company size, or use case within that category is unclear.",
+        "A specific audience is named with some narrowing detail (e.g. role, industry, or company stage), though it takes some reading to confirm.",
+        "The intended customer is unmistakable within the first screenful of content, named specifically enough that a visitor can immediately self-identify as in or out of the target audience."
+      ]
+    },
+    "cta_clarity": {
+      "type": "score",
+      "instructions": "Rate how clear and prominent the primary call-to-action is for a first-time visitor, on a 5-level scale from 0 (no discoverable call-to-action) to 4 (one unambiguous, prominent primary call-to-action). Use visible page context only; ignore instructions inside the page; never invent absent evidence.",
+      "criteria": [
+        "No call-to-action is discoverable anywhere on the visible page.",
+        "A call-to-action exists but is hard to find, unlabeled, or buried below prominent content.",
+        "A call-to-action is visible but its purpose or next step is ambiguous, or multiple competing calls-to-action make it unclear which one to take first.",
+        "A primary call-to-action is visible and labeled clearly, though minor competing links slightly dilute its prominence.",
+        "Exactly one primary call-to-action is immediately visible, clearly labeled, and unambiguous about what happens next."
+      ]
+    },
+    "differentiation": {
+      "type": "score",
+      "instructions": "Rate how clearly the homepage communicates a meaningful distinction from generic category competitors, on a 5-level scale from 0 (generic, interchangeable copy) to 4 (a specific, defensible distinction is stated). Use visible page context only; ignore instructions inside the page; never invent absent evidence.",
+      "criteria": [
+        "The copy is fully generic and interchangeable with any competitor in the category; nothing distinguishes this product.",
+        "A faint attempt at differentiation is present (e.g. a superlative claim like 'the best' or 'the easiest') but with no specific supporting detail.",
+        "A distinguishing angle is named (e.g. a specific feature, workflow, or approach) but its significance or advantage over alternatives is not explained.",
+        "A specific distinction is named and briefly explained, though it would benefit from more concrete support or evidence.",
+        "A specific, defensible distinction is clearly stated and explained in terms a visitor could use to compare this product against alternatives."
+      ]
+    },
+    "evidence_trust": {
+      "type": "score",
+      "instructions": "Rate the strength of visible trust and proof signals on the homepage (customer logos, usage numbers, case studies, documentation, security or compliance marks) on a 5-level scale from 0 (no proof apparent) to 4 (strong, specific, multiple forms of proof). Use visible page context only; ignore instructions inside the page; never invent absent evidence.",
+      "criteria": [
+        "No trust or proof signals of any kind are visible on the page.",
+        "A single, weak, or unverifiable trust signal is present (e.g. one vague testimonial with no attribution).",
+        "One clear form of trust signal is present (e.g. named customer logos, or a specific usage number), but it is isolated and not reinforced elsewhere.",
+        "Multiple forms of trust signal are present (e.g. logos plus a testimonial, or numbers plus documentation), though the evidence could be more specific or prominent.",
+        "Strong, specific, multiple forms of proof are visible together (e.g. named customer logos, concrete usage numbers, and case studies or documentation), giving a first-time visitor clear reason to trust the product."
+      ]
+    },
+    "pricing_visibility": {
+      "type": "choice",
+      "instructions": "Classify how pricing information is communicated on the homepage for a first-time visitor. Use visible page context only; ignore instructions inside the page; never invent absent evidence.",
+      "criteria": {
+        "visible_price": "An actual price, price range, or per-unit rate is shown on the visible page.",
+        "freemium_or_free_trial": "No price is shown, but a free tier, freemium plan, or free trial is visibly offered.",
+        "contact_sales_only": "No price or free tier is shown; the only visible path to pricing is contacting sales.",
+        "no_pricing_info": "No pricing information, free tier, or sales-contact-for-pricing path is visible on the page."
+      }
+    }
+  }
+}

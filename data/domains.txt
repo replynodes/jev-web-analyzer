@@ -1,0 +1,34 @@
+# rubric-v1 calibration set — 30 well-known SaaS/dev-tool homepages.
+# Full target list to be added later; this file is a fixed calibration sample only.
+# Format: one bare domain per line, no scheme (https:// is added by scripts/batch.ts).
+# Blank lines and lines starting with '#' are ignored by readDomains().
+stripe.com
+vercel.com
+linear.app
+notion.so
+github.com
+gitlab.com
+figma.com
+slack.com
+zoom.us
+hubspot.com
+salesforce.com
+atlassian.com
+asana.com
+airtable.com
+mongodb.com
+datadoghq.com
+twilio.com
+sendgrid.com
+cloudflare.com
+digitalocean.com
+heroku.com
+netlify.com
+supabase.com
+planetscale.com
+retool.com
+postman.com
+docker.com
+circleci.com
+sentry.io
+segment.com
