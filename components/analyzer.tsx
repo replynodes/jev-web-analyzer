@@ -7,12 +7,14 @@ import { LoaderCircle, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SiteHeader } from "@/components/site-header";
+import type { LeaderboardRow } from "@/lib/csv";
 import { EXAMPLE_DOMAINS, exampleDomainUrl } from "@/lib/example-domains";
 import { MAX_JUDGMENTS, type Judgment } from "@/lib/judgment";
+import { scoreBand } from "@/lib/leaderboard-format";
 import { resultPath, safeInitialUrl } from "@/lib/query-url";
 import { saveSessionJudgments } from "@/lib/session-judgments";
 
-export function Analyzer() {
+export function Analyzer({ leaderboardPreview = [] }: { leaderboardPreview?: LeaderboardRow[] }) {
   const router = useRouter();
   const [url, setUrl] = useState("");
   const [judgments, setJudgments] = useState<Judgment[]>([]);
@@ -57,10 +59,7 @@ export function Analyzer() {
             </Button>
           </form>
         </div>
-        <p className="mt-3 text-xs text-muted-foreground">
-          Curious how other homepages score?{" "}
-          <Link href="/leaderboard" className="underline underline-offset-2 hover:text-foreground">See the Jev leaderboard →</Link>
-        </p>
+        <LeaderboardPreview rows={leaderboardPreview} />
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <span className="text-xs text-muted-foreground">Try:</span>
           {EXAMPLE_DOMAINS.map((domain) => (
@@ -77,6 +76,41 @@ export function Analyzer() {
         </footer>
       </section>
     </main>
+  );
+}
+
+function LeaderboardPreview({ rows }: { rows: LeaderboardRow[] }) {
+  if (!rows.length) return null;
+  return (
+    <div className="mt-6 rounded-2xl border bg-card p-4 shadow-border-small">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <p className="text-sm font-semibold">Jev leaderboard</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">How other homepages score against the same rubric.</p>
+        </div>
+        <Button asChild variant="outline" size="sm">
+          <Link href="/leaderboard">Xem thêm →</Link>
+        </Button>
+      </div>
+      <ul className="mt-3 divide-y">
+        {rows.map((row) => {
+          if (row.overall === undefined) return null;
+          return (
+            <li key={row.domain}>
+              <Link href={`/leaderboard/${row.domain}`} className="flex items-center justify-between gap-3 py-2 hover:opacity-80">
+                <span className="truncate text-sm">{row.domain}</span>
+                <span
+                  className="inline-flex min-w-10 shrink-0 items-center justify-center rounded-full px-2 py-0.5 text-xs font-bold text-white"
+                  style={{ backgroundColor: scoreBand(row.overall).hex }}
+                >
+                  {row.overall}
+                </span>
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
   );
 }
 

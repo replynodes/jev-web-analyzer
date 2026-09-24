@@ -1,34 +1,35 @@
-# rubric-v1 calibration set — 30 well-known SaaS/dev-tool homepages.
+# rubric-v1 calibration set — 30 indie SaaS/dev-tool homepages sourced from
+# https://trustmrr.com (a directory of revenue-verified indie SaaS products).
 # Full target list to be added later; this file is a fixed calibration sample only.
 # Format: one bare domain per line, no scheme (https:// is added by scripts/batch.ts).
 # Blank lines and lines starting with '#' are ignored by readDomains().
-stripe.com
-vercel.com
-linear.app
-notion.so
-github.com
-gitlab.com
-figma.com
-slack.com
-zoom.us
-hubspot.com
-salesforce.com
-atlassian.com
-asana.com
-airtable.com
-mongodb.com
-datadoghq.com
-twilio.com
-sendgrid.com
-cloudflare.com
-digitalocean.com
-heroku.com
-netlify.com
-supabase.com
-planetscale.com
-retool.com
-postman.com
-docker.com
-circleci.com
-sentry.io
-segment.com
+chatbase.ai
+rezi.io
+postiz.com
+datafa.st
+shipfa.st
+codefa.st
+posteahora.com
+goutsnap.com
+carcatcher.app
+wheeloflife.app
+checkform.app
+boothie.app
+calories.app
+taichi.app
+kotrol.app
+gtm.help
+ultrawideo.com
+verbatik.com
+draftly.com
+vidfarm.cc
+animalo.com
+1lookup.com
+cometly.com
+supliful.com
+replyga.in
+quickclip.app
+victrays.com
+taprefer.com
+brandmymac.com
+promptwise.ai
