@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { trackReplynodesCtaClicked } from "@/lib/analytics";
 
@@ -26,7 +27,10 @@ export function SiteHeader({ crumb }: { crumb: string }) {
         <span className="text-muted-foreground">/</span>
         <span className="truncate text-sm text-muted-foreground">{crumb}</span>
       </div>
-      <ThemeToggle />
+      <div className="flex shrink-0 items-center gap-3">
+        <Link href="/leaderboard" className="text-sm text-muted-foreground underline-offset-2 hover:text-foreground hover:underline">Leaderboard</Link>
+        <ThemeToggle />
+      </div>
     </header>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { LoaderCircle, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -56,6 +57,10 @@ export function Analyzer() {
             </Button>
           </form>
         </div>
+        <p className="mt-3 text-xs text-muted-foreground">
+          Curious how other homepages score?{" "}
+          <Link href="/leaderboard" className="underline underline-offset-2 hover:text-foreground">See the Jev leaderboard →</Link>
+        </p>
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <span className="text-xs text-muted-foreground">Try:</span>
           {EXAMPLE_DOMAINS.map((domain) => (
