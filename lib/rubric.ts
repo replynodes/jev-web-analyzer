@@ -31,8 +31,8 @@ export function loadRubric(rubricPath: string = DEFAULT_RUBRIC_PATH): RubricFile
 }
 
 export type SanitizedRubricAnswer =
-  | { type: "score"; value: number; probabilities?: Record<string, number> }
-  | { type: "choice"; value: string; probabilities?: Record<string, number> };
+  | { type: "score"; value: number; probabilities?: Record<string, number>; confidence?: number }
+  | { type: "choice"; value: string; probabilities?: Record<string, number>; confidence?: number };
 
 export function sanitizeRubricAnswer(
   questionId: string,
@@ -42,16 +42,17 @@ export function sanitizeRubricAnswer(
 ): SanitizedRubricAnswer | null {
   const sanitized = sanitizeAnswer(questionId, raw, question.type, providerMetadata);
   if (!sanitized) return null;
+  const confidence = typeof sanitized.confidence === "number" ? sanitized.confidence : undefined;
   if (question.type === "score" && sanitized.type === "score") {
     const value = sanitized.value as number;
     const maxLevel = question.criteria.length - 1;
     if (!Number.isFinite(value) || value < 0 || value > maxLevel) return null;
-    return { type: "score", value, ...(sanitized.probabilities ? { probabilities: sanitized.probabilities } : {}) };
+    return { type: "score", value, ...(sanitized.probabilities ? { probabilities: sanitized.probabilities } : {}), ...(confidence === undefined ? {} : { confidence }) };
   }
   if (question.type === "choice" && sanitized.type === "choice") {
     const value = sanitized.value as string;
     if (!Object.prototype.hasOwnProperty.call(question.criteria, value)) return null;
-    return { type: "choice", value, ...(sanitized.probabilities ? { probabilities: sanitized.probabilities } : {}) };
+    return { type: "choice", value, ...(sanitized.probabilities ? { probabilities: sanitized.probabilities } : {}), ...(confidence === undefined ? {} : { confidence }) };
   }
   return null;
 }

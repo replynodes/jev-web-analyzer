@@ -1,3 +1,5 @@
+"use client";
+
 import { ThemeToggle } from "@/components/theme-toggle";
 import { trackReplynodesCtaClicked } from "@/lib/analytics";
 

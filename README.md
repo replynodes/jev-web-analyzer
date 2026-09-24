@@ -1,32 +1,39 @@
 # Jev Web Analyzer
 
-**Learn Jev with real web data.**
+**Paste a homepage. See what a first-time visitor — and Jev — can actually tell about it.**
 
-Jev Web Analyzer is a small, inspectable example of using **Jev** to make typed probabilistic judgments over live website content.
+**[Try the live demo →](https://replynodes.com/jev-web-analyzer/)** · **[Leaderboard →](https://replynodes.com/jev-web-analyzer/leaderboard)** · **[Methodology →](./METHODOLOGY.md)**
 
-Paste a URL. **ReplyNodes** fetches the page and turns it into clean Markdown. **Jev**, through **Vercel AI Gateway**, evaluates that state with structured questions and returns decisions with probabilities.
-
-**[Try the live demo →](https://replynodes.com/jev-web-analyzer/)**
-
-<a href="https://replynodes.com/jev-web-analyzer/">
-  <img src="./docs/images/jev-web-analyzer-hero.svg" alt="Jev Web Analyzer — paste a SaaS website and see what Jev thinks" width="100%">
+<a href="https://replynodes.com/jev-web-analyzer/leaderboard/shipfa.st">
+  <img src="./docs/images/leaderboard-permalink-mockup.svg" alt="A Jev leaderboard permalink page: shipfa.st scored 88/100, with sub-scores for clarity, CTA clarity, differentiation, and pricing visibility, each showing the matched rubric level and Jev's confidence." width="100%">
 </a>
+
+### Example results
+
+| Domain | Overall | Read |
+| --- | --- | --- |
+| [shipfa.st](https://replynodes.com/jev-web-analyzer/leaderboard/shipfa.st) | 88 / 100 | Clear what it is, clear who it's for, one obvious CTA |
+| [chatbase.ai](https://replynodes.com/jev-web-analyzer/leaderboard/chatbase.ai) | 81 / 100 | Strong clarity, differentiation is the weak point |
+| [codefa.st](https://replynodes.com/jev-web-analyzer/leaderboard/codefa.st) | 52 / 100 | Audience and differentiation are hard to pin down |
 
 > **Unofficial community project, not affiliated with TypeSafe AI.**
 
+---
+
 ## What this demo teaches
 
-The SaaS website teardown is only an example workload. The main purpose of this repo is to make Jev's evaluation pattern easy to see, run, modify, and reuse.
+The SaaS website teardown is only an example workload. The main purpose of this repo is to make Jev's evaluation pattern easy to see, run, modify, and reuse — including as a **committed, static dataset** (the leaderboard above) rather than only a single ad-hoc request.
 
 | Jev capability | How this project demonstrates it |
 | --- | --- |
 | **Choice judgments** | Infer audience, clarity, differentiation, CTA, trust, and product motion |
 | **Boolean judgments** | Add your own yes/no evaluation |
-| **Score judgments** | Add your own ordered rubric |
+| **Score judgments** | Add your own ordered rubric — the leaderboard's five sub-scores are all Score judgments |
 | **Probabilities** | Inspect the distribution behind a decision |
 | **Multiple judgments** | Evaluate the same state against many questions in one call |
 | **Custom questions** | Add Boolean, Choice, or Score judgments from the UI |
 | **Real-world state** | Evaluate live Markdown instead of a synthetic prompt |
+| **Batch evaluation** | Score many homepages offline against a frozen rubric, no datastore required |
 
 The useful output is not a long generated review. It is a set of **explicit decisions over shared state**, with probabilities that software can inspect.
 
@@ -82,7 +89,7 @@ const result = await evaluate({
 console.log(result.answers);
 ```
 
-In this repo, the same call evaluates ten default founder questions plus any custom questions added by the user.
+In this repo, the same call evaluates ten default founder questions plus any custom questions added by the user, and — offline, via `scripts/batch.ts` — a frozen six-question rubric across many domains at once.
 
 See:
 
@@ -90,6 +97,8 @@ See:
 - [`lib/founder-questions.ts`](./lib/founder-questions.ts) — example typed questions
 - [`lib/contracts.ts`](./lib/contracts.ts) — request and response contracts
 - [`components/analyzer.tsx`](./components/analyzer.tsx) — interactive demo UI
+- [`scripts/batch.ts`](./scripts/batch.ts) — offline batch scoring against a frozen rubric
+- [`data/rubric-v1.json`](./data/rubric-v1.json) / [`METHODOLOGY.md`](./METHODOLOGY.md) — the leaderboard's rubric and scoring formula
 
 ## Example workload: SaaS website teardown
 
@@ -135,6 +144,18 @@ How technically detailed is this page?
 ```
 
 This is the part to modify if you want to experiment with Jev for classification, filtering, routing, evaluation, moderation, ranking signals, or other structured decision tasks.
+
+## The leaderboard
+
+`/leaderboard` renders a static dataset committed to the repo — no database, no client-side fetching. It is generated offline:
+
+```bash
+pnpm run batch --domains=data/domains.txt
+```
+
+`scripts/batch.ts` calls the same `fetchPublicMarkdown` / `evaluate` functions the live demo uses, directly — not through the HTTP route — with bounded concurrency, retry with backoff, and a hard per-domain timeout. It writes `data/leaderboard-<YYYY-MM>.json` and a flattened `.csv`, and is resumable: re-running it skips domains already present unless you pass `--force`.
+
+Every domain gets a permalink (`/leaderboard/<domain>`), a dynamic OG image, and a [shields.io](https://shields.io/badges/endpoint-badge) badge endpoint at `/api/badge/<domain>` that any README can embed. See [`METHODOLOGY.md`](./METHODOLOGY.md) for exactly what is measured, the full rubric text, the scoring formula, and stated limitations.
 
 ## Run it locally
 
@@ -189,6 +210,7 @@ The easiest ways to experiment are:
 2. Keep ReplyNodes as the state source, or replace the state with your own text/data.
 3. Change how the UI presents probabilities and decisions.
 4. Add a new example workload that demonstrates a useful Jev capability.
+5. Edit [`data/rubric-v1.json`](./data/rubric-v1.json) and re-run the batch script to build your own leaderboard.
 
 A useful contribution does not need to make the project bigger. Small examples that make a Jev behavior easier to understand are especially welcome.
 
@@ -251,6 +273,8 @@ structured answers
 The server keeps credentials private, validates public URLs, treats webpage content as untrusted state, and supports NDJSON streaming so the UI can show real execution stages as they complete.
 
 The requested Jev alias shown to users is `jev-latest`. The implementation routes through the Vercel AI Gateway model ID `typesafe-ai/jev`. A resolved model version is displayed only when provider metadata explicitly exposes one.
+
+The leaderboard (`/leaderboard`) is a separate, offline path: `scripts/batch.ts` is a standalone CLI, not a server route, so it does not add a queue or worker to the running app — see [ADR 0001](./docs/adr/0001-jev-gateway-demo.md).
 
 ## Why ReplyNodes is here
 
