@@ -39,6 +39,12 @@ function currentMonth(): string {
   return `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}`;
 }
 
+function parseNumericFlag(flag: string, value: string, min: number): number {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) throw new Error(`${flag} expects a number, got: ${value}`);
+  return Math.max(min, parsed);
+}
+
 export function parseArgs(argv: readonly string[]): BatchOptions {
   const options: BatchOptions = {
     domainsFile: "data/domains.txt",
@@ -57,11 +63,11 @@ export function parseArgs(argv: readonly string[]): BatchOptions {
     switch (flag) {
       case "--domains": if (value) options.domainsFile = value; break;
       case "--out-dir": if (value) options.outDir = value; break;
-      case "--concurrency": if (value) options.concurrency = Math.max(1, Number(value)); break;
-      case "--retries": if (value) options.maxRetries = Math.max(0, Number(value)); break;
-      case "--timeout-ms": if (value) options.timeoutMs = Math.max(1000, Number(value)); break;
-      case "--price-per-1k-input": if (value) options.pricePer1kInput = Number(value); break;
-      case "--price-per-1k-output": if (value) options.pricePer1kOutput = Number(value); break;
+      case "--concurrency": if (value) options.concurrency = parseNumericFlag(flag, value, 1); break;
+      case "--retries": if (value) options.maxRetries = parseNumericFlag(flag, value, 0); break;
+      case "--timeout-ms": if (value) options.timeoutMs = parseNumericFlag(flag, value, 1000); break;
+      case "--price-per-1k-input": if (value) options.pricePer1kInput = parseNumericFlag(flag, value, 0); break;
+      case "--price-per-1k-output": if (value) options.pricePer1kOutput = parseNumericFlag(flag, value, 0); break;
     }
   }
   return options;
@@ -142,16 +148,32 @@ async function withRetry<T>(attempt: () => Promise<T>, opts: { maxRetries: numbe
   throw lastError;
 }
 
-function failedRow(domain: string, status: LeaderboardRow["status"], errorCode: string, timings?: { scrapeMs?: number; jevMs?: number; totalMs?: number }): LeaderboardRow {
+function failedRow(params: {
+  domain: string;
+  status: LeaderboardRow["status"];
+  errorCode: string;
+  rubricVersion: string;
+  scrapeMs?: number;
+  jevMs?: number;
+  totalMs?: number;
+  finalUrl?: string;
+  requestId?: string;
+  markdownSha256?: string;
+  markdownLength?: number;
+}): LeaderboardRow {
   return {
-    domain,
-    rubric_version: "",
-    status,
-    error_code: errorCode,
+    domain: params.domain,
+    final_url: params.finalUrl,
+    rubric_version: params.rubricVersion,
+    status: params.status,
+    error_code: params.errorCode,
     fetched_at: new Date().toISOString(),
-    scrape_ms: timings?.scrapeMs,
-    jev_ms: timings?.jevMs,
-    total_ms: timings?.totalMs,
+    request_id: params.requestId,
+    markdown_sha256: params.markdownSha256,
+    markdown_length: params.markdownLength,
+    scrape_ms: params.scrapeMs,
+    jev_ms: params.jevMs,
+    total_ms: params.totalMs,
     answers: {},
   };
 }
@@ -165,9 +187,14 @@ async function runOne(domain: string, ctx: { replynodesKey: string; rubric: Rubr
     scrapeMs = Math.round(performance.now() - started);
   } catch (error) {
     const { code, transient } = classifyError(error);
-    throw Object.assign(new Error(code), { transient, rubricRow: failedRow(domain, "scrape_failed", code, { scrapeMs: Math.round(performance.now() - started) }) });
+    throw Object.assign(new Error(code), {
+      transient,
+      rubricRow: failedRow({ domain, status: "scrape_failed", errorCode: code, rubricVersion: ctx.rubric.rubric_version, scrapeMs: Math.round(performance.now() - started) }),
+    });
   }
 
+  const markdownSha256 = createHash("sha256").update(scraped.markdown).digest("hex");
+  const markdownLength = scraped.markdown.length;
   const { state } = prepareAnalysisContext(scraped.markdown);
   const jevStart = performance.now();
   let result: Awaited<ReturnType<typeof evaluate>>;
@@ -185,27 +212,32 @@ async function runOne(domain: string, ctx: { replynodesKey: string; rubric: Rubr
     const { code, transient } = classifyError(error);
     throw Object.assign(new Error(code), {
       transient,
-      rubricRow: failedRow(domain, "jev_failed", code, { scrapeMs, jevMs: Math.round(performance.now() - jevStart), totalMs: Math.round(performance.now() - started) }),
+      rubricRow: failedRow({
+        domain, status: "jev_failed", errorCode: code, rubricVersion: ctx.rubric.rubric_version,
+        scrapeMs, jevMs: Math.round(performance.now() - jevStart), totalMs: Math.round(performance.now() - started),
+        finalUrl: scraped.url, requestId: scraped.requestId, markdownSha256, markdownLength,
+      }),
     });
   }
 
   const providerMetadata = (result as unknown as { providerMetadata?: unknown }).providerMetadata;
   const rawAnswers = result.answers as Record<string, unknown>;
   const answers: LeaderboardRow["answers"] = {};
-  let sanitizeFailed: string | undefined;
+  let sanitizeFailedQuestionId: string | undefined;
   for (const [questionId, question] of Object.entries(ctx.rubric.questions)) {
     const sanitized = sanitizeRubricAnswer(questionId, rawAnswers[questionId], question, providerMetadata);
-    if (!sanitized) {
-      if (ctx.rubric.score_question_ids.includes(questionId)) sanitizeFailed = questionId;
-      continue;
-    }
+    if (!sanitized) { sanitizeFailedQuestionId = questionId; break; }
     answers[questionId] = sanitized;
   }
 
   const totalMs = Math.round(performance.now() - started);
-  if (sanitizeFailed) {
+  if (sanitizeFailedQuestionId) {
     throw Object.assign(new Error("INVALID_JEV_ANSWER_SHAPE"), {
-      rubricRow: { ...failedRow(domain, "jev_failed", "INVALID_JEV_ANSWER_SHAPE", { scrapeMs, jevMs, totalMs }), final_url: scraped.url, request_id: scraped.requestId, rubric_version: ctx.rubric.rubric_version, answers },
+      transient: false,
+      rubricRow: failedRow({
+        domain, status: "jev_failed", errorCode: `INVALID_JEV_ANSWER_SHAPE:${sanitizeFailedQuestionId}`, rubricVersion: ctx.rubric.rubric_version,
+        scrapeMs, jevMs, totalMs, finalUrl: scraped.url, requestId: scraped.requestId, markdownSha256, markdownLength,
+      }),
     });
   }
 
@@ -221,8 +253,8 @@ async function runOne(domain: string, ctx: { replynodesKey: string; rubric: Rubr
     status: "ok",
     fetched_at: new Date().toISOString(),
     request_id: scraped.requestId,
-    markdown_sha256: createHash("sha256").update(scraped.markdown).digest("hex"),
-    markdown_length: scraped.markdown.length,
+    markdown_sha256: markdownSha256,
+    markdown_length: markdownLength,
     scrape_ms: scrapeMs,
     jev_ms: jevMs,
     total_ms: totalMs,
@@ -236,6 +268,12 @@ async function runOne(domain: string, ctx: { replynodesKey: string; rubric: Rubr
   };
 }
 
+// Known limitation: this resolves with the timeout placeholder but does not
+// abort `promise` itself, since fetchPublicMarkdown/evaluate aren't wired to
+// an externally supplied AbortController. A timed-out domain's underlying
+// scrape/jev call keeps running until its own internal bound elapses (25s
+// scrape, 30s jev); its eventual result is simply discarded. Acceptable for
+// a manual offline tool since both internal calls already have hard caps.
 function withHardTimeout<T>(promise: Promise<T>, ms: number, onTimeout: () => T): Promise<T> {
   return new Promise((resolve) => {
     const timer = setTimeout(() => resolve(onTimeout()), ms);
@@ -308,7 +346,14 @@ async function main(): Promise<void> {
     return;
   }
 
-  const opts = parseArgs(process.argv.slice(2));
+  let opts: BatchOptions;
+  try {
+    opts = parseArgs(process.argv.slice(2));
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : String(error));
+    process.exitCode = 1;
+    return;
+  }
   const rubric = loadRubric();
 
   let domains: string[];
@@ -334,10 +379,10 @@ async function main(): Promise<void> {
         const rubricRow = (error as { rubricRow?: LeaderboardRow })?.rubricRow;
         if (rubricRow) return rubricRow;
         const { code } = classifyError(error);
-        return failedRow(domain, "scrape_failed", code);
+        return failedRow({ domain, status: "scrape_failed", errorCode: code, rubricVersion: rubric.rubric_version });
       }),
       opts.timeoutMs,
-      () => failedRow(domain, "jev_failed", "DOMAIN_TIMEOUT"),
+      () => failedRow({ domain, status: "jev_failed", errorCode: "DOMAIN_TIMEOUT", rubricVersion: rubric.rubric_version }),
     );
     results.push(row);
   });

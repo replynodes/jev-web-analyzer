@@ -20,7 +20,14 @@ export type RubricFile = {
 const DEFAULT_RUBRIC_PATH = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "data", "rubric-v1.json");
 
 export function loadRubric(rubricPath: string = DEFAULT_RUBRIC_PATH): RubricFile {
-  return JSON.parse(readFileSync(rubricPath, "utf8")) as RubricFile;
+  const rubric = JSON.parse(readFileSync(rubricPath, "utf8")) as RubricFile;
+  for (const id of rubric.score_question_ids) {
+    const question = rubric.questions[id];
+    if (question?.type !== "score" || question.criteria.length !== rubric.score_scale.levels) {
+      throw new Error(`Rubric question "${id}" has ${question?.type === "score" ? question.criteria.length : "no"} criteria levels, expected score_scale.levels (${rubric.score_scale.levels})`);
+    }
+  }
+  return rubric;
 }
 
 export type SanitizedRubricAnswer =
@@ -41,7 +48,12 @@ export function sanitizeRubricAnswer(
     if (!Number.isFinite(value) || value < 0 || value > maxLevel) return null;
     return { type: "score", value, ...(sanitized.probabilities ? { probabilities: sanitized.probabilities } : {}) };
   }
-  return { type: "choice", value: sanitized.value as string, ...(sanitized.probabilities ? { probabilities: sanitized.probabilities } : {}) };
+  if (question.type === "choice" && sanitized.type === "choice") {
+    const value = sanitized.value as string;
+    if (!Object.prototype.hasOwnProperty.call(question.criteria, value)) return null;
+    return { type: "choice", value, ...(sanitized.probabilities ? { probabilities: sanitized.probabilities } : {}) };
+  }
+  return null;
 }
 
 export function computeOverall(scores: readonly number[], levels: number): number | undefined {

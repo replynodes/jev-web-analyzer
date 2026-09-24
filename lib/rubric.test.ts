@@ -1,5 +1,24 @@
+import { mkdtempSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { computeOverall, loadRubric, sanitizeRubricAnswer, type RubricQuestion } from "./rubric";
+import { computeOverall, loadRubric, sanitizeRubricAnswer, type RubricFile, type RubricQuestion } from "./rubric";
+
+function writeTempRubric(overrides: Partial<RubricFile>): string {
+  const base: RubricFile = {
+    rubric_version: "test",
+    rationale: "x",
+    score_scale: { levels: 5, raw_min: 0, raw_max: 4, direction: "x" },
+    score_question_ids: ["q1"],
+    category_question_ids: [],
+    overall_formula: "x",
+    questions: { q1: { type: "score", instructions: "x", criteria: ["a", "b", "c", "d", "e"] } },
+  };
+  const dir = mkdtempSync(path.join(tmpdir(), "rubric-test-"));
+  const filePath = path.join(dir, "rubric.json");
+  writeFileSync(filePath, JSON.stringify({ ...base, ...overrides }));
+  return filePath;
+}
 
 describe("computeOverall", () => {
   it("maps all-max scores to 100", () => {
@@ -45,6 +64,29 @@ describe("sanitizeRubricAnswer", () => {
   it("rejects a malformed raw answer", () => {
     expect(sanitizeRubricAnswer("q", null, scoreQuestion)).toBeNull();
     expect(sanitizeRubricAnswer("q", {}, choiceQuestion)).toBeNull();
+  });
+  it("rejects a choice value that is not one of the question's declared criteria keys", () => {
+    expect(sanitizeRubricAnswer("q", { choice: "unclear" }, choiceQuestion)).toBeNull();
+  });
+});
+
+describe("loadRubric consistency check", () => {
+  it("throws if a score question's criteria length does not match score_scale.levels", () => {
+    const filePath = writeTempRubric({
+      score_scale: { levels: 5, raw_min: 0, raw_max: 4, direction: "x" },
+      questions: { q1: { type: "score", instructions: "x", criteria: ["a", "b", "c"] } },
+    });
+    expect(() => loadRubric(filePath)).toThrow(/criteria levels/);
+  });
+  it("throws if a score_question_id points at a non-score question", () => {
+    const filePath = writeTempRubric({
+      questions: { q1: { type: "choice", instructions: "x", criteria: { a: "A" } } },
+    });
+    expect(() => loadRubric(filePath)).toThrow();
+  });
+  it("loads successfully when criteria lengths match score_scale.levels", () => {
+    const filePath = writeTempRubric({});
+    expect(loadRubric(filePath).rubric_version).toBe("test");
   });
 });
 
