@@ -48,13 +48,24 @@ export async function validatePublicUrl(input: string, lookup: DnsLookup = dns.l
   return url;
 }
 
-export async function fetchPublicMarkdown(input: string, apiKey: string, fetcher = fetch) {
+function markdownEndpoint(url: URL): string {
+  const endpoint = new URL("https://md.replynodes.com/");
+  endpoint.pathname += url.toString();
+  return endpoint.toString();
+}
+
+function isMarkdownContentType(value: string | null): boolean {
+  return value?.split(";", 1)[0]?.trim().toLowerCase() === "text/markdown";
+}
+
+export async function fetchPublicMarkdown(input: string, fetcher = fetch) {
   let url = await validatePublicUrl(input);
   for (let redirect = 0; redirect <= MAX_REDIRECTS; redirect++) {
     let response: Response;
     try {
-      response = await fetcher(`https://api.replynodes.com/v1/webcontext/scrape?url=${encodeURIComponent(url.toString())}`, {
-        headers: { Authorization: `Bearer ${apiKey}`, Accept: "application/json" },
+      response = await fetcher(markdownEndpoint(url), {
+        headers: { Accept: "text/markdown" },
+        redirect: "manual",
         signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
       });
     } catch (error) {
@@ -75,6 +86,7 @@ export async function fetchPublicMarkdown(input: string, apiKey: string, fetcher
       if (response.status >= 500) throw new Error("PROVIDER_UNAVAILABLE");
       throw new Error("SITE_UNREACHABLE");
     }
+    if (!isMarkdownContentType(response.headers.get("content-type"))) throw new Error("PROVIDER_BAD_RESPONSE");
     const contentLength = Number(response.headers.get("content-length") ?? 0);
     if (contentLength > MAX_RESPONSE_BYTES) throw new Error("RESPONSE_TOO_LARGE");
     const reader = response.body?.getReader();
@@ -93,18 +105,18 @@ export async function fetchPublicMarkdown(input: string, apiKey: string, fetcher
       if (error instanceof Error && error.message === "RESPONSE_TOO_LARGE") throw error;
       throw new Error("PROVIDER_UNREACHABLE");
     }
-    let body;
-    try { body = JSON.parse(new TextDecoder().decode(Buffer.concat(chunks))); } catch { throw new Error("PROVIDER_BAD_RESPONSE"); }
-    const data = body?.data;
-    const markdown = typeof data === "string" ? data : data?.markdown ?? data?.content ?? data?.text;
-    if (typeof markdown !== "string" || !markdown.trim() || typeof body?.meta?.request_id !== "string") throw new Error("PROVIDER_BAD_RESPONSE");
-    const providerFinalUrl = [body.meta.final_url, body.meta.finalUrl, body.meta.url].find((value: unknown) => typeof value === "string");
+    const markdown = new TextDecoder().decode(Buffer.concat(chunks));
+    const requestId = response.headers.get("x-request-id");
+    if (!markdown.trim() || !requestId) throw new Error("PROVIDER_BAD_RESPONSE");
     let finalUrl = url.toString();
+    const providerFinalUrl = response.headers.get("x-final-url");
     if (providerFinalUrl) {
-      try { const candidate = new URL(providerFinalUrl); if (["http:", "https:"].includes(candidate.protocol)) finalUrl = candidate.toString(); } catch { /* use the validated requested URL */ }
+      try {
+        const candidate = await validatePublicUrl(providerFinalUrl);
+        finalUrl = candidate.toString();
+      } catch { /* use the validated requested URL */ }
     }
-    const providerStatus = [body.meta.status, body.meta.status_code].find((value: unknown) => typeof value === "number" && Number.isInteger(value) && value >= 100 && value <= 599);
-    return { url: finalUrl, markdown: markdown.slice(0, MAX_RESPONSE_BYTES), requestId: body.meta.request_id, status: providerStatus ?? response.status };
+    return { url: finalUrl, markdown: markdown.slice(0, MAX_RESPONSE_BYTES), requestId, status: response.status };
   }
   throw new Error("PROVIDER_BAD_RESPONSE");
 }
