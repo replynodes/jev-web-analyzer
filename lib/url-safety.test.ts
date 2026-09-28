@@ -37,35 +37,35 @@ describe("URL safety", () => {
   it("reports a distinct timeout error instead of an opaque provider failure", async () => {
     const timeoutError = Object.assign(new Error("The operation was aborted due to timeout"), { name: "TimeoutError" });
     const timedOutFetcher = () => Promise.reject(timeoutError);
-    await expect(fetchPublicMarkdown("https://example.com", "test-key", timedOutFetcher)).rejects.toThrow("FETCH_TIMEOUT");
+    await expect(fetchPublicMarkdown("https://example.com", timedOutFetcher)).rejects.toThrow("FETCH_TIMEOUT");
   });
   it("classifies non-timeout network failures reaching the scrape provider instead of leaking the raw error", async () => {
     const networkError = new Error("fetch failed");
     const failingFetcher = () => Promise.reject(networkError);
-    await expect(fetchPublicMarkdown("https://example.com", "test-key", failingFetcher)).rejects.toThrow("PROVIDER_UNREACHABLE");
+    await expect(fetchPublicMarkdown("https://example.com", failingFetcher)).rejects.toThrow("PROVIDER_UNREACHABLE");
   });
   it("reports a DNS resolution failure for the target host as an explicit code, not an opaque failure", async () => {
     const failingLookup = () => Promise.reject(Object.assign(new Error("getaddrinfo ENOTFOUND example.com"), { code: "ENOTFOUND" }));
     await expect(validatePublicUrl("https://example.com", failingLookup)).rejects.toThrow("DNS_LOOKUP_FAILED");
   });
   it("classifies a malformed provider response body instead of leaking a raw JSON parse error", async () => {
-    const malformedJsonFetcher = () => Promise.resolve({ ok: true, status: 200, headers: { get: () => null }, body: { getReader: () => makeReader(["not json"]) } } as unknown as Response);
-    await expect(fetchPublicMarkdown("https://example.com", "test-key", malformedJsonFetcher)).rejects.toThrow("PROVIDER_BAD_RESPONSE");
+    const jsonFetcher = () => Promise.resolve({ ok: true, status: 200, headers: { get: (name: string) => name === "content-type" ? "application/json" : null }, body: { getReader: () => makeReader(["{\"error\":\"not markdown\"}"]) } } as unknown as Response);
+    await expect(fetchPublicMarkdown("https://example.com", jsonFetcher)).rejects.toThrow("PROVIDER_BAD_RESPONSE");
   });
   it("classifies a provider response missing usable markdown instead of leaking a raw shape error", async () => {
-    const emptyBodyFetcher = () => Promise.resolve({ ok: true, status: 200, headers: { get: () => null }, body: { getReader: () => makeReader([JSON.stringify({ data: {}, meta: {} })]) } } as unknown as Response);
-    await expect(fetchPublicMarkdown("https://example.com", "test-key", emptyBodyFetcher)).rejects.toThrow("PROVIDER_BAD_RESPONSE");
+    const emptyBodyFetcher = () => Promise.resolve({ ok: true, status: 200, headers: { get: (name: string) => name === "content-type" ? "text/markdown; charset=utf-8" : null }, body: { getReader: () => makeReader(["  "]) } } as unknown as Response);
+    await expect(fetchPublicMarkdown("https://example.com", emptyBodyFetcher)).rejects.toThrow("PROVIDER_BAD_RESPONSE");
   });
   it("classifies a redirect with no location header instead of leaking a generic fetch failure", async () => {
     const redirectFetcher = () => Promise.resolve({ ok: false, status: 302, headers: { get: () => null } } as unknown as Response);
-    await expect(fetchPublicMarkdown("https://example.com", "test-key", redirectFetcher)).rejects.toThrow("PROVIDER_BAD_RESPONSE");
+    await expect(fetchPublicMarkdown("https://example.com", redirectFetcher)).rejects.toThrow("PROVIDER_BAD_RESPONSE");
   });
   it("classifies a fast non-2xx provider response by status instead of collapsing every rejection into the same opaque failure", async () => {
     const fakeResponse = (status: number) => ({ ok: false, status, headers: { get: () => null } }) as unknown as Response;
-    await expect(fetchPublicMarkdown("https://example.com", "test-key", () => Promise.resolve(fakeResponse(429)))).rejects.toThrow("PROVIDER_RATE_LIMITED");
-    await expect(fetchPublicMarkdown("https://example.com", "test-key", () => Promise.resolve(fakeResponse(401)))).rejects.toThrow("PROVIDER_UNAUTHORIZED");
-    await expect(fetchPublicMarkdown("https://example.com", "test-key", () => Promise.resolve(fakeResponse(403)))).rejects.toThrow("PROVIDER_UNAUTHORIZED");
-    await expect(fetchPublicMarkdown("https://example.com", "test-key", () => Promise.resolve(fakeResponse(503)))).rejects.toThrow("PROVIDER_UNAVAILABLE");
-    await expect(fetchPublicMarkdown("https://example.com", "test-key", () => Promise.resolve(fakeResponse(400)))).rejects.toThrow("SITE_UNREACHABLE");
+    await expect(fetchPublicMarkdown("https://example.com", () => Promise.resolve(fakeResponse(429)))).rejects.toThrow("PROVIDER_RATE_LIMITED");
+    await expect(fetchPublicMarkdown("https://example.com", () => Promise.resolve(fakeResponse(401)))).rejects.toThrow("PROVIDER_UNAUTHORIZED");
+    await expect(fetchPublicMarkdown("https://example.com", () => Promise.resolve(fakeResponse(403)))).rejects.toThrow("PROVIDER_UNAUTHORIZED");
+    await expect(fetchPublicMarkdown("https://example.com", () => Promise.resolve(fakeResponse(503)))).rejects.toThrow("PROVIDER_UNAVAILABLE");
+    await expect(fetchPublicMarkdown("https://example.com", () => Promise.resolve(fakeResponse(400)))).rejects.toThrow("SITE_UNREACHABLE");
   });
 });

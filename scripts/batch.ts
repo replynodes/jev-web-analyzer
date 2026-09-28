@@ -7,7 +7,7 @@
 //
 // Local usage (env vars are not auto-loaded outside the Next.js process):
 //   pnpm exec tsx --env-file=.env.local scripts/batch.ts -- --concurrency=4
-// or export REPLYNODES_API_KEY / AI_GATEWAY_API_KEY in the shell and run:
+// or export AI_GATEWAY_API_KEY in the shell and run:
 //   pnpm run batch -- --domains=data/domains.txt --force
 //
 import { createHash } from "node:crypto";
@@ -178,12 +178,12 @@ function failedRow(params: {
   };
 }
 
-async function runOne(domain: string, ctx: { replynodesKey: string; rubric: RubricFile }): Promise<LeaderboardRow> {
+async function runOne(domain: string, ctx: { rubric: RubricFile }): Promise<LeaderboardRow> {
   const started = performance.now();
   let scraped: Awaited<ReturnType<typeof fetchPublicMarkdown>>;
   let scrapeMs: number;
   try {
-    scraped = await fetchPublicMarkdown(exampleDomainUrl(domain), ctx.replynodesKey);
+    scraped = await fetchPublicMarkdown(exampleDomainUrl(domain));
     scrapeMs = Math.round(performance.now() - started);
   } catch (error) {
     const { code, transient } = classifyError(error);
@@ -337,9 +337,8 @@ async function writeOutputs(rows: LeaderboardRow[], rubric: RubricFile, opts: Ba
 }
 
 async function main(): Promise<void> {
-  const replynodesKey = process.env.REPLYNODES_API_KEY;
   const gatewayKey = process.env.AI_GATEWAY_API_KEY;
-  const missing = [!replynodesKey && "REPLYNODES_API_KEY", !gatewayKey && "AI_GATEWAY_API_KEY"].filter(Boolean);
+  const missing = [!gatewayKey && "AI_GATEWAY_API_KEY"].filter(Boolean);
   if (missing.length) {
     console.error(`Missing required env var(s): ${missing.join(", ")}`);
     process.exitCode = 1;
@@ -375,7 +374,7 @@ async function main(): Promise<void> {
 
   await runPool(toRun, opts.concurrency, async (domain) => {
     const row = await withHardTimeout(
-      withRetry(() => runOne(domain, { replynodesKey: replynodesKey!, rubric }), { maxRetries: opts.maxRetries, baseDelayMs: 500 }).catch((error) => {
+      withRetry(() => runOne(domain, { rubric }), { maxRetries: opts.maxRetries, baseDelayMs: 500 }).catch((error) => {
         const rubricRow = (error as { rubricRow?: LeaderboardRow })?.rubricRow;
         if (rubricRow) return rubricRow;
         const { code } = classifyError(error);

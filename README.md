@@ -172,14 +172,13 @@ pnpm install
 Create `.env.local`:
 
 ```bash
-REPLYNODES_API_KEY=...
 AI_GATEWAY_API_KEY=...
 ```
 
-- ReplyNodes provides the live web context.
+- The public [ReplyNodes Markdown API](https://replynodes.com/markdown-api/) provides clean Markdown for the analyzer; for example, [https://md.replynodes.com/stripe.com](https://md.replynodes.com/stripe.com). It requires no ReplyNodes key, account, or credits.
 - Vercel AI Gateway provides access to Jev.
 
-The app has no mock provider path, so real analysis requires both credentials.
+The app has no mock provider path, so real analysis requires the AI Gateway key.
 
 ### 3. Start
 
@@ -259,7 +258,7 @@ If you are unsure where to start, open an issue or propose a small example befor
 Browser
   ↓
 Next.js /api/analyze
-  ├─ ReplyNodes Web Scrape API
+  ├─ ReplyNodes public Markdown API
   │    ↓
   │  clean Markdown
   │
@@ -280,7 +279,7 @@ The leaderboard (`/leaderboard`) is a separate, offline path: `scripts/batch.ts`
 
 Jev needs state to evaluate.
 
-For this demo, ReplyNodes turns a live public webpage into clean Markdown so Jev can focus on the decision layer:
+For this demo, the public [ReplyNodes Markdown API](https://replynodes.com/markdown-api/) turns a live public webpage into clean Markdown so Jev can focus on the decision layer. It needs no ReplyNodes key, account, or credits; try [https://md.replynodes.com/stripe.com](https://md.replynodes.com/stripe.com):
 
 **ReplyNodes fetches the web. Jev judges what it means.**
 

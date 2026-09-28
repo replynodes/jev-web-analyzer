@@ -25,7 +25,7 @@ export function GET() { return NextResponse.json({ message: "Use POST /jev-web-a
 async function analyze(inputUrl: string, judgments: JudgmentInput[], emit: (event: AnalysisEvent) => void, cached?: AnalysisResponse): Promise<AnalysisResponse> {
   if (cached) { emit({ type: "request-started", startedAt: cached.timeline.startedAt }); emit({ type: "cache-hit", result: cached }); emit({ type: "done", result: cached }); return cached; }
   const startedAt = new Date().toISOString(); emit({ type: "request-started", startedAt }); emit({ type: "fetch-started" });
-  const started = performance.now(); const scraped = await fetchPublicMarkdown(inputUrl, process.env.REPLYNODES_API_KEY!); const scrapeMs = Math.round(performance.now() - started);
+  const started = performance.now(); const scraped = await fetchPublicMarkdown(inputUrl); const scrapeMs = Math.round(performance.now() - started);
   emit({ type: "fetch-completed", scrapeMs, status: scraped.status, finalUrl: scraped.url });
   emit({ type: "extract-started" }); const extractStart = performance.now(); const context = prepareAnalysisContext(scraped.markdown); const { state, sentCharacters, sourceCharacters, contextTruncated } = context; const extractMs = Math.round(performance.now() - extractStart); emit({ type: "extract-completed", characters: sentCharacters }); emit({ type: "context-prepared", extractMs, characters: sentCharacters }); emit({ type: "jev-started" });
   const jevStart = performance.now(); const result = await evaluate({ model: MODEL, state, questions: { ...DEFAULT_QUESTIONS, ...normalizeQuestions(judgments) }, maxRetries: 0, abortSignal: AbortSignal.timeout(30_000) }); const jevMs = Math.round(performance.now() - jevStart);
@@ -39,7 +39,7 @@ async function analyze(inputUrl: string, judgments: JudgmentInput[], emit: (even
 
 export async function POST(request: Request) {
   const stream = wantsStream(request); const respondError = (status: number, code: string, message: string) => stream ? streamFailure(status, code, message) : fail(status, code, message);
-  if (!allowRequest(clientIp(request))) return respondError(429, "RATE_LIMITED", "Too many requests. Please try again shortly."); if (!process.env.REPLYNODES_API_KEY || !process.env.AI_GATEWAY_API_KEY) return respondError(503, "NOT_CONFIGURED", "Analysis is temporarily unavailable.");
+  if (!allowRequest(clientIp(request))) return respondError(429, "RATE_LIMITED", "Too many requests. Please try again shortly."); if (!process.env.AI_GATEWAY_API_KEY) return respondError(503, "NOT_CONFIGURED", "Analysis is temporarily unavailable.");
   let body: unknown; try { if (Number(request.headers.get("content-length") ?? 0) > 24_000) return respondError(413, "REQUEST_TOO_LARGE", "The request is too large."); body = await request.json(); } catch { return respondError(400, "INVALID_JSON", "The request body is invalid."); }
   const parsed = requestSchema.safeParse(body); if (!parsed.success) return respondError(400, "INVALID_INPUT", "Enter a valid public URL and bounded judgments."); const { url: inputUrl, judgments } = parsed.data; const key = cacheKey(inputUrl, judgments); const cached = getCached<AnalysisResponse>(key);
   if (!stream && cached) return NextResponse.json(cached, { headers: { "x-analysis-cache": "hit" } });
