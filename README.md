@@ -63,6 +63,14 @@ The UI also exposes the real execution pipeline:
 
 Timings are measured from real execution. The app does not simulate progress or invent model metadata.
 
+## Use this with your AI agent
+
+Install the canonical skill for agent-driven company research and website analysis:
+
+```sh
+npx skills add replynodes/replynodes-agent-skills --skill company-research
+```
+
 ## The Jev pattern
 
 The core of the project is intentionally small. The server uses the AI SDK evaluation API like this:
