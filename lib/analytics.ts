@@ -34,6 +34,7 @@ export function trackAnalysisStarted(url: string, customJudgmentCount: number) {
   const hostname = sanitizeHostname(url);
   if (!hostname) return;
   safeCapture("analysis_started", {
+    skill: "company-research",
     hostname,
     has_custom_judgments: customJudgmentCount > 0,
     custom_judgment_count: customJudgmentCount,
@@ -44,6 +45,7 @@ export function trackAnalysisCompleted(result: AnalysisResponse) {
   const hostname = sanitizeHostname(result.url);
   if (!hostname) return;
   safeCapture("analysis_completed", {
+    skill: "company-research",
     hostname,
     classification_count: result.classifications.length,
     scrape_ms: result.timeline.scrapeMs,
