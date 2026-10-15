@@ -22,6 +22,7 @@ const softwareApplicationJsonLd = {
   operatingSystem: "Web",
   url: SITE_URL,
   offers: {
+    "@type": "Offer",
     price: "0",
     priceCurrency: "USD",
   },
