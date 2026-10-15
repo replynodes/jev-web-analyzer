@@ -6,6 +6,7 @@ import { SiteHeader } from "@/components/site-header";
 import { isLowConfidence } from "@/lib/confidence";
 import type { LeaderboardData } from "@/lib/leaderboard";
 import { badgeMarkdown, formatRunDate, labelForQuestionId, loadLeaderboardData, matchedLevelDescription, pricingLabel, scoreBand } from "@/lib/leaderboard";
+import { SITE_URL } from "@/lib/leaderboard-format";
 import { cn } from "@/lib/utils";
 
 function findRow(data: LeaderboardData | null, domain: string) {
@@ -19,10 +20,19 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ domain: string }> }): Promise<Metadata> {
   const { domain } = await params;
   const row = findRow(loadLeaderboardData(), domain);
-  if (!row || row.status !== "ok") return { title: `${domain} · Jev leaderboard · ReplyNodes` };
+  const url = `${SITE_URL}/leaderboard/${domain}`;
+  if (!row || row.status !== "ok") {
+    return {
+      title: `${domain} · Jev leaderboard · ReplyNodes`,
+      alternates: { canonical: url },
+      openGraph: { url },
+    };
+  }
   return {
     title: `${domain} — ${row.overall}/100 · Jev leaderboard · ReplyNodes`,
-    description: `How clearly ${domain}'s homepage communicates to a first-time visitor, judged by Jev against a fixed rubric.`,
+    description: `How clearly ${domain}'s homepage communicates to a first-time visitor, scoring ${row.overall}/100 under a fixed rubric.`,
+    alternates: { canonical: url },
+    openGraph: { url },
   };
 }
 
