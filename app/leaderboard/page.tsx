@@ -2,10 +2,17 @@ import type { Metadata } from "next";
 import { SiteHeader } from "@/components/site-header";
 import { LeaderboardTable } from "@/components/leaderboard/leaderboard-table";
 import { formatRunDate, loadLeaderboardData, scoreQuestionMeta } from "@/lib/leaderboard";
+import { SITE_URL } from "@/lib/leaderboard-format";
 
 export const metadata: Metadata = {
   title: "Leaderboard · Jev Web Analyzer · ReplyNodes",
   description: "How well do SaaS and dev-tool homepages communicate to a first-time visitor, judged by Jev against a fixed, published rubric.",
+  alternates: {
+    canonical: `${SITE_URL}/leaderboard`,
+  },
+  openGraph: {
+    url: `${SITE_URL}/leaderboard`,
+  },
 };
 
 export default function LeaderboardPage() {
