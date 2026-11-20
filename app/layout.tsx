@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
+  metadataBase: new URL(new URL(SITE_URL).origin),
   title: "Jev Web Analyzer · ReplyNodes",
   description: "Analyze web context with ReplyNodes and Jev via Vercel AI Gateway.",
 };
